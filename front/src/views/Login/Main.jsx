@@ -89,7 +89,7 @@ const Login = (props) => {
           role: roles,
           token: accessToken,
           userId: response?.data?.data?.user?.id,
-          team : response?.data?.data?.user?.team
+          team: response?.data?.data?.user?.team,
         });
 
         navigate("../", { replace: true });
@@ -112,11 +112,7 @@ const Login = (props) => {
         <MainColorSwitcher /> */}
         <div className="w-full min-h-screen p-5 md:p-20 flex items-center justify-center">
           <div className="w-96 intro-y">
-            <img
-              className="mx-auto w-16"
-              alt="Template"
-              src={logoUrl}
-            />
+            <img className="mx-auto w-16" alt="Template" src={logoUrl} />
             <div className="text-white dark:text-slate-300 text-2xl font-medium text-center mt-14">
               Login to Your Account!
             </div>
