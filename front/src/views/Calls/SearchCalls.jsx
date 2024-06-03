@@ -374,7 +374,7 @@ const AdminUsers = (props) => {
 
       <div className="col-span-1 lg:order-1 order-2 lg:col-span-3">
         <div className="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-          <div className="lg:basis-8/12 grid grid-cols-4 lg:grid-cols-6 gap-2">
+          <div className=" lg:basis-8/12 grid grid-cols-4 lg:grid-cols-6 gap-2">
             <Link
               className="btn btn-elevated-primary shadow-md mr-2 py-2"
               to="/calls/add"
@@ -442,12 +442,9 @@ const AdminUsers = (props) => {
               </>
             )}
           </div>
-          {/* <div className="hidden md:block mx-auto text-slate-500">
-               {filterData.length} {" /"}
-              {callData.state === "hasValue" && callData.contents["length"]}
-            </div> */}
+        
 
-          <div className="lg:basis-4/12   grid  grid-cols-1 lg:grid-cols-4 gap-3">
+          <div className=" w-full lg:basis-4/12   grid  grid-cols-1 lg:grid-cols-4 gap-3">
             <select
               onChange={(e) => handelSection(e)}
               className="w-full  form-select box mt-3 sm:mt-0"
@@ -482,11 +479,11 @@ const AdminUsers = (props) => {
               </div>
             </div>
 
-            <button onClick={searchCall} className="btn-primary">
+            <button onClick={searchCall} className="btn btn-primary">
               Search{" "}
             </button>
 
-            <button onClick={resetCall} className="btn-danger text-white">
+            <button onClick={resetCall} className="btn btn-danger text-white">
               Reset Search{" "}
             </button>
           </div>
