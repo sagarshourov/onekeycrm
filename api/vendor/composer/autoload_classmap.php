@@ -33,7 +33,6 @@ return array(
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'App\\Imports\\CallImport' => $baseDir . '/app/Imports/CallImport.php',
     'App\\Imports\\FirstSheetImport' => $baseDir . '/app/Imports/FirstSheetImport.php',
-    'App\\Imports\\SingleSheetImport' => $baseDir . '/app/Imports/SingleSheetImport.php',
     'App\\Models\\Activity' => $baseDir . '/app/Models/Activity.php',
     'App\\Models\\ApplyingFor' => $baseDir . '/app/Models/ApplyingFor.php',
     'App\\Models\\Calls' => $baseDir . '/app/Models/Calls.php',

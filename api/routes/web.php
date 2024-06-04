@@ -23,3 +23,19 @@ Route::get('/export', [CallsController::class, 'call_export']);
 
 Route::get('users/export/', [UserController::class, 'export']);
 Route::get('users/import/', [UserController::class, 'import']);
+
+Route::get('clear', function () {
+
+	\Artisan::call('config:clear');
+
+	\Artisan::call('cache:clear');
+
+	\Artisan::call('config:cache');
+
+	\Artisan::call('view:clear');
+
+	\Artisan::call('route:clear');
+
+	dd('cleared');
+});
+

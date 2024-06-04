@@ -132,6 +132,7 @@ class CallsController extends BaseController
     private function get_filter_cal($user_id, $field, $value, $off, $limit, $search, $order)
     {
 
+       
         $user = Auth::user();
 
 
@@ -174,7 +175,7 @@ class CallsController extends BaseController
         } else if ($user->is_admin && $user->is_admin == 3) {
             // return Calls::where(['assigned_to' => $user->id, $field => $value])->with($with)->orderBy('id', 'DESC')->offset($off)->limit($limit)->get();
 
-
+         
             if ($search == '0') {
 
                 // return $field.'='.$null;
@@ -182,7 +183,9 @@ class CallsController extends BaseController
 
                 return Calls::where([['assigned_to', '=', $user->id], [$field, '=',  $null]])->with($with)->orderBy('sort', $order)->offset($off)->limit($limit)->get();
             } else if ($field == 'sections' && $search != '0') {
+               
                 return Calls::where('assigned_to', '=', $user->id)->OrWhere('email', 'like', '%' . $query . '%')->OrWhere('first_name', 'like', '%' . $query . '%')->OrWhere('last_name', 'like', '%' . $query . '%')->with($with)->get();
+              
             } else {
                 return Calls::where([['assigned_to', '=', $user->id], [$field, '=',  $null], ['email', 'like', '%' . $query . '%']])->OrWhere([['assigned_to', '=', $user->id], [$field, '=',  $null], ['first_name', 'like', '%' . $query . '%']])->with($with)->get();
             }
@@ -195,12 +198,13 @@ class CallsController extends BaseController
                 return Calls::where([['assigned_to', '=', $user_id], [$field, '=',  $null], ['email', 'like', '%' . $query . '%']])->with($with)->get();
             }
         } else {
-
+         
             if ($search == '0') {
+                //return 'cacll';
                 return Calls::where($field,  $null)->with($with)->orderBy('sort', $order)->offset($off)->limit($limit)->get();
             } else if ($field == 'sections' && $search != '0') {
-
-                return Calls::where('email', 'like', '%' . $query . '%')->OrWhere('first_name', 'like', '%' . $query . '%')->OrWhere('last_name', 'like', '%' . $query . '%')->with($with)->get();
+                
+                return Calls::where('email', 'like', '%' . $query . '%')->OrWhere('whatsapp', 'like', '%' . $query . '%')->OrWhere('phone_number', 'like', '%' . $query . '%')->OrWhere('first_name', 'like', '%' . $query . '%')->OrWhere('last_name', 'like', '%' . $query . '%')->with($with)->get();
             } else {
                 return Calls::where([[$field, '=',  $null], ['email', 'like', '%' . $query . '%']])->OrWhere([[$field, '=',  $null], ['first_name', 'like', '%' . $query . '%']])->with($with)->get();
             }

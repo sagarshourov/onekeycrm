@@ -118,7 +118,7 @@ const UsersTable = (props) => {
           </tr>
         </thead>
         <tbody>
-          -
+          
           {users &&
             users.slice(0, rowCount).map((user, key) => {
               let count = key + 1;

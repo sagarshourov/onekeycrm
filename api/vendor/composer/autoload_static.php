@@ -666,7 +666,6 @@ class ComposerStaticInit7d04744ae3b1afb4d2a697cc9418aa98
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Imports\\CallImport' => __DIR__ . '/../..' . '/app/Imports/CallImport.php',
         'App\\Imports\\FirstSheetImport' => __DIR__ . '/../..' . '/app/Imports/FirstSheetImport.php',
-        'App\\Imports\\SingleSheetImport' => __DIR__ . '/../..' . '/app/Imports/SingleSheetImport.php',
         'App\\Models\\Activity' => __DIR__ . '/../..' . '/app/Models/Activity.php',
         'App\\Models\\ApplyingFor' => __DIR__ . '/../..' . '/app/Models/ApplyingFor.php',
         'App\\Models\\Calls' => __DIR__ . '/../..' . '/app/Models/Calls.php',

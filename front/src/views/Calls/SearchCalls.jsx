@@ -38,80 +38,9 @@ import { filter } from "lodash";
 import { helper } from "@/utils/helper";
 import { settingState } from "../../state/setting-atom";
 
-function todayFilters(array) {
-  // var today = "";
 
-  var today = new Date();
 
-  var today = helper.formatDate(today, "YYYY-MM-DD");
 
-  return filter(array, (_items) => {
-    return Date.parse(_items.follow_up_date) === Date.parse(today);
-  });
-}
-
-function towFilters(array) {
-  var tomorrow = new Date();
-
-  tomorrow =
-    tomorrow.getFullYear() +
-    "-" +
-    (tomorrow.getMonth() + 1) +
-    "-" +
-    (tomorrow.getDate() + 1);
-
-  tomorrow = helper.formatDate(tomorrow, "YYYY-MM-DD");
-
-  return filter(array, (_items) => {
-    return Date.parse(_items.follow_up_date) === Date.parse(tomorrow);
-  });
-}
-
-function applySortFilters(array, searchValue, sec) {
-  // console.log(sec);
-  if (sec == "no") {
-    return filter(array, (_items) => {
-      return (
-        _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1
-      );
-    });
-  } else if (sec == "all") {
-    return filter(array, (_items) => {
-      return (
-        (_items.email &&
-          _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
-        (_items.first_name &&
-          _items.first_name.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
-        (_items.phone_number &&
-          _items.phone_number
-            .toLowerCase()
-            .indexOf(searchValue.toLowerCase()) !== -1)
-      );
-    });
-  } else {
-    return filter(array, (_items) => {
-      if (_items.email) {
-        return (
-          (_items.email &&
-            _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-              -1) ||
-          (_items.first_name &&
-            _items.first_name
-              .toLowerCase()
-              .indexOf(searchValue.toLowerCase()) !== -1) ||
-          (_items.phone_number &&
-            _items.phone_number
-              .toLowerCase()
-              .indexOf(searchValue.toLowerCase()) !== -1)
-        );
-      } else {
-        return true;
-      }
-    });
-  }
-}
 
 function findByValue(array, field) {
   return filter(array, (_items) => {
@@ -146,18 +75,13 @@ const AdminUsers = (props) => {
 
   const setting = useRecoilValue(settingState);
 
-  const setPageOffset = useSetRecoilState(pagOffset);
+ 
   const searchQuery = useSetRecoilState(searchAtom);
   const limitQuery = useSetRecoilState(pageLimit);
 
-  const columnQuery = useSetRecoilState(columnState);
   const valueQuery = useSetRecoilState(valueState);
 
-  const handelGo = (section) => {
-    document.getElementsByClassName(
-      "item" + section
-    )[0].parentNode.style.display = "block";
-  };
+ 
 
   const dragStart = (e, id) => {
     setRow(e.target);
@@ -242,10 +166,10 @@ const AdminUsers = (props) => {
     // valueQuery(null);
     if (search == "") {
       searchQuery(0);
-      setSearch("");
+     // setSearch("");
     } else {
       searchQuery(0);
-      setSearch("");
+      //setSearch("");
       limitQuery(500);
       setRowCount(500);
       searchQuery(search);
@@ -374,7 +298,7 @@ const AdminUsers = (props) => {
 
       <div className="col-span-1 lg:order-1 order-2 lg:col-span-3">
         <div className="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-          <div className=" lg:basis-8/12 grid grid-cols-4 lg:grid-cols-6 gap-2">
+          <div className=" lg:basis-7/12 gap-2">
             <Link
               className="btn btn-elevated-primary shadow-md mr-2 py-2"
               to="/calls/add"
@@ -444,7 +368,7 @@ const AdminUsers = (props) => {
           </div>
         
 
-          <div className=" w-full lg:basis-4/12   grid  grid-cols-1 lg:grid-cols-4 gap-3">
+          <div className=" w-full lg:basis-5/12   grid  grid-cols-1 lg:grid-cols-4 gap-3">
             <select
               onChange={(e) => handelSection(e)}
               className="w-full  form-select box mt-3 sm:mt-0"
@@ -471,16 +395,24 @@ const AdminUsers = (props) => {
             <div className="w-full">
               <div className=" text-slate-500">
                 <input
-                  onChange={handelSearch.bind(this)}
+                  onChange={(e)=>handelSearch(e)}
                   type="text"
+                  defaultValue={search}
                   className="form-control  box"
                   placeholder="Search..."
                 />
               </div>
             </div>
 
-            <button onClick={searchCall} className="btn btn-primary">
+            <button onClick={()=>searchCall()} className="btn btn-primary">
               Search{" "}
+              {loading && (
+                  <LoadingIcon
+                    icon="three-dots"
+                    color="white"
+                    className="w-4 h-4 ml-2"
+                  />
+                )}
             </button>
 
             <button onClick={resetCall} className="btn btn-danger text-white">

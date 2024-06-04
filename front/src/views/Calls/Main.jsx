@@ -34,7 +34,7 @@ function get_single(arr, group) {
   var date = "";
   if (arr.extra && arr.extra.length > 0) {
     arr.extra.map((dat, index) => {
-      if (dat.groups == group && dat.values[0].value) {
+      if (dat.groups == group && dat.values[0] &&  dat.values[0].value) {
         date = dat.values[0].value;
       }
     });
