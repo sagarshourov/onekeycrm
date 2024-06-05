@@ -369,7 +369,7 @@ const AdminUsers = (props) => {
 
   const [sections, setSection] = useState(0);
   const [priority, setPriority] = useState(0); //set by filter priority
-
+  const [employee, setEmployee] = useState(0);
   const handelCallModel = (show) => {
     setCallView(show);
   };
@@ -602,8 +602,13 @@ const AdminUsers = (props) => {
     setPriority(val);
   };
 
+  const EmployeeFilter = (val) => {
+    //console.log("emp", val);
+    setEmployee(parseInt(val));
+  };
+
   //console.log("offset", offset);
-  console.log("userdata", usersData);
+  // console.log("userdata", usersData);
   return (
     <div className="">
       <h2 className="intro-y text-lg font-medium mt-10 ">Call List</h2>
@@ -611,12 +616,14 @@ const AdminUsers = (props) => {
         <div className="intro-y   col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
           {/* <div className="bg-info bg-danger bg-success bg-warning bg-yellow-400 bg-secondary bg-purple-600 z-10 z-50"></div> */}
           <div className=" lg:basis-9/12 grid grid-cols-2 md:grid-cols-5 lg:grid-cols-8 gap-2 ">
+          {allCheck.length == 0 && (
             <Link
               className="btn btn-elevated-primary shadow-md mr-2 py-2"
               to="/calls/add"
             >
               Add New Call
             </Link>
+          )}
 
             <select
               name="p_sort"
@@ -653,41 +660,45 @@ const AdminUsers = (props) => {
 
                 {logindata.role !== 3 && (
                   <>
-                  <select
-                    name="results"
-                    onChange={(e) => bulkUpdate(e.target.name, e.target.value)}
-                    className="form-select"
-                  >
-                    <option value="0">Results..</option>
+                    <select
+                      name="results"
+                      onChange={(e) =>
+                        bulkUpdate(e.target.name, e.target.value)
+                      }
+                      className="form-select"
+                    >
+                      <option value="0">Results..</option>
 
-                    {setting.results &&
-                      setting.results.map((val, indx) => (
-                        <option key={indx} value={val?.id}>
-                          {val?.title}
-                        </option>
-                      ))}
+                      {setting.results &&
+                        setting.results.map((val, indx) => (
+                          <option key={indx} value={val?.id}>
+                            {val?.title}
+                          </option>
+                        ))}
 
-                    {/* 
+                      {/* 
                     <option value="3">Open</option>
                     <option value="4">No Answer</option>
                     <option value="1">Cancel </option>
                     <option value="2">Client</option> */}
-                  </select>
-                  <select
-                    name="assigned_to"
-                    onChange={(e) => bulkUpdate(e.target.name, e.target.value)}
-                    className="form-select"
-                  >
-                    <option value="0">Employees ..</option>
-                    {usersData.state === "hasValue" &&
-                      usersData.contents.map((val, indx) => (
-                        <option key={indx} value={val?.id}>
-                          {val?.first_name} {val?.last_name}
-                        </option>
-                      ))}
-                  </select>
-                    </>
-                  )}
+                    </select>
+                    <select
+                      name="assigned_to"
+                      onChange={(e) =>
+                        bulkUpdate(e.target.name, e.target.value)
+                      }
+                      className="form-select"
+                    >
+                      <option value="0">Employees ..</option>
+                      {usersData.state === "hasValue" &&
+                        usersData.contents.map((val, indx) => (
+                          <option key={indx} value={val?.id}>
+                            {val?.first_name} {val?.last_name}
+                          </option>
+                        ))}
+                    </select>
+                  </>
+                )}
                 <select
                   name="sections"
                   onChange={(e) => bulkUpdate(e.target.name, e.target.value)}
@@ -706,7 +717,19 @@ const AdminUsers = (props) => {
             ) : (
               logindata.role === 1 && (
                 <>
-                  
+                  <select
+                    name="assigned_to"
+                    onChange={(e) => EmployeeFilter(e.target.value)}
+                    className="form-select"
+                  >
+                    <option value="0">Employees ..</option>
+                    {usersData.state === "hasValue" &&
+                      usersData.contents.map((val, indx) => (
+                        <option key={indx} value={val?.id}>
+                          {val?.first_name} {val?.last_name}
+                        </option>
+                      ))}
+                  </select>
                   <Link
                     className="btn btn-elevated-success text-white shadow-md mr-2 py-2"
                     to="/calls/import"
@@ -806,7 +829,7 @@ const AdminUsers = (props) => {
                             callData.contents,
                             search,
                             setting.sections,
-                            callSwitch ? logindata.userId : 0,
+                            callSwitch ? logindata.userId : employee,
                             priority
                           )}
                           setUserId={setCallId}
@@ -839,7 +862,7 @@ const AdminUsers = (props) => {
                       callData.contents,
                       search,
                       val?.id,
-                      callSwitch ? logindata.userId : 0,
+                      callSwitch ? logindata.userId : employee,
                       priority
                     );
                     // if (calls.length == 0) return;
