@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CallsController;
+use App\Http\Controllers\EmailController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -38,4 +39,11 @@ Route::get('clear', function () {
 
 	dd('cleared');
 });
+
+
+
+Route::get('/authorize', [EmailController::class, 'authorize']);
+Route::get('/callback', [EmailController::class, 'callback']);
+Route::get('/emails', [EmailController::class, 'getEmails']);
+
 

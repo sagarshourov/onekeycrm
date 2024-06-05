@@ -14,6 +14,7 @@ import { useParams, Link } from "react-router-dom";
 
 import { useRecoilStateLoadable, useRecoilValue } from "recoil";
 import { callListState } from "../../state/admin-atom";
+import { allUserListState } from "../../state/admin-atom";
 
 import { loginState } from "../../state/login-atom";
 
@@ -342,6 +343,7 @@ const AdminUsers = (props) => {
   const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
 
   const [callData, setCallState] = useRecoilStateLoadable(callListState);
+  const [usersData, setUserState] = useRecoilStateLoadable(allUserListState);
   const [rowCount, setRowCount] = useState(10);
   const [search, setSearch] = useState("");
   const [aheck, setAcheck] = useState(false);
@@ -472,11 +474,6 @@ const AdminUsers = (props) => {
     setRowCount(parseInt(e.target.value));
   };
 
-  const handelLoad = () => {
-    let count = rowCount + 20;
-
-    setRowCount(count);
-  };
 
   const handelSearch = (e) => {
     setSearch(e.target.value);
@@ -607,7 +604,7 @@ const AdminUsers = (props) => {
   };
 
   //console.log("offset", offset);
-
+  console.log('userdata',usersData);
   return (
     <div className="">
       <h2 className="intro-y text-lg font-medium mt-10 ">Call List</h2>
@@ -690,6 +687,19 @@ const AdminUsers = (props) => {
                         {val?.title}
                       </option>
                     ))}
+                </select>
+                <select
+                  name="employee"
+                  onChange={(e) => bulkUpdate(e.target.name, e.target.value)}
+                  className="form-select"
+                >
+                  <option value="0">Employees ..</option>
+                  {usersData.state === "hasValue" && (
+                    usersData.contents.map((val, indx) => (
+                      <option key={indx} value={val?.id}>
+                        {val?.first_name}  {val?.last_name}
+                      </option>
+                    )))}
                 </select>
               </>
             ) : (

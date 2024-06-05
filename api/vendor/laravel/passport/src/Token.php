@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Token extends Model
 {
+    use ResolvesInheritedScopes;
+
     /**
      * The database table used by the model.
      *
@@ -42,15 +44,7 @@ class Token extends Model
     protected $casts = [
         'scopes' => 'array',
         'revoked' => 'bool',
-    ];
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = [
-        'expires_at',
+        'expires_at' => 'datetime',
     ];
 
     /**
@@ -100,27 +94,6 @@ class Token extends Model
         }
 
         return false;
-    }
-
-    /**
-     * Resolve all possible scopes.
-     *
-     * @param  string  $scope
-     * @return array
-     */
-    protected function resolveInheritedScopes($scope)
-    {
-        $parts = explode(':', $scope);
-
-        $partsCount = count($parts);
-
-        $scopes = [];
-
-        for ($i = 1; $i <= $partsCount; $i++) {
-            $scopes[] = implode(':', array_slice($parts, 0, $i));
-        }
-
-        return $scopes;
     }
 
     /**
