@@ -35,7 +35,7 @@ function get_single(arr, group) {
   var date = "";
   if (arr.extra && arr.extra.length > 0) {
     arr.extra.map((dat, index) => {
-      if (dat.groups == group && dat.values[0] &&  dat.values[0].value) {
+      if (dat.groups == group && dat.values[0] && dat.values[0].value) {
         date = dat.values[0].value;
       }
     });
@@ -187,7 +187,7 @@ function tomorrowScheduleFilters(array, callSwitch, user_id) {
 }
 
 function applyAllFilters(array, searchValue, sections, user_id, priority) {
- //console.log("priority", priority);
+  //console.log("priority", priority);
   if (array.length == 0) return;
   if (user_id !== 0) {
     return filter(array, (_items) => {
@@ -227,7 +227,7 @@ function applyAllFilters(array, searchValue, sections, user_id, priority) {
         _items.sections !== sectionFind(sections, _items.sections) &&
         _items.p_sort &&
         _items.p_sort.id == priority &&
-        (_items.results.id == 3 || _items.results.id == 6 )
+        (_items.results.id == 3 || _items.results.id == 6)
       ) {
         return true;
       } else if (parseInt(priority) !== 0) {
@@ -474,7 +474,6 @@ const AdminUsers = (props) => {
     setRowCount(parseInt(e.target.value));
   };
 
-
   const handelSearch = (e) => {
     setSearch(e.target.value);
   };
@@ -604,7 +603,7 @@ const AdminUsers = (props) => {
   };
 
   //console.log("offset", offset);
-  console.log('userdata',usersData);
+  console.log("userdata", usersData);
   return (
     <div className="">
       <h2 className="intro-y text-lg font-medium mt-10 ">Call List</h2>
@@ -653,6 +652,7 @@ const AdminUsers = (props) => {
                 </button>
 
                 {logindata.role !== 3 && (
+                  <>
                   <select
                     name="results"
                     onChange={(e) => bulkUpdate(e.target.name, e.target.value)}
@@ -673,7 +673,21 @@ const AdminUsers = (props) => {
                     <option value="1">Cancel </option>
                     <option value="2">Client</option> */}
                   </select>
-                )}
+                  <select
+                    name="assigned_to"
+                    onChange={(e) => bulkUpdate(e.target.name, e.target.value)}
+                    className="form-select"
+                  >
+                    <option value="0">Employees ..</option>
+                    {usersData.state === "hasValue" &&
+                      usersData.contents.map((val, indx) => (
+                        <option key={indx} value={val?.id}>
+                          {val?.first_name} {val?.last_name}
+                        </option>
+                      ))}
+                  </select>
+                    </>
+                  )}
                 <select
                   name="sections"
                   onChange={(e) => bulkUpdate(e.target.name, e.target.value)}
@@ -688,23 +702,11 @@ const AdminUsers = (props) => {
                       </option>
                     ))}
                 </select>
-                <select
-                  name="employee"
-                  onChange={(e) => bulkUpdate(e.target.name, e.target.value)}
-                  className="form-select"
-                >
-                  <option value="0">Employees ..</option>
-                  {usersData.state === "hasValue" && (
-                    usersData.contents.map((val, indx) => (
-                      <option key={indx} value={val?.id}>
-                        {val?.first_name}  {val?.last_name}
-                      </option>
-                    )))}
-                </select>
               </>
             ) : (
               logindata.role === 1 && (
                 <>
+                  
                   <Link
                     className="btn btn-elevated-success text-white shadow-md mr-2 py-2"
                     to="/calls/import"

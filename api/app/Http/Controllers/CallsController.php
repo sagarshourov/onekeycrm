@@ -1089,7 +1089,10 @@ class CallsController extends BaseController
     public function update(Request $request, $id)
     {
 
+       
+
         if ($id == 0) {
+           // return 'update';
             if ($request->name == 'results' && $request->value == '4') { // when no answer selected its will go no answer section
                 Calls::whereIn('id', $request->ids)
                     ->update(['sections' => 5]);
@@ -1130,6 +1133,12 @@ class CallsController extends BaseController
                 Calls::whereIn('id', $request->ids)
                     ->update(['f_results' => $request->value]);
             }
+           
+            // if ($request->name == 'employee') {
+                
+            // }
+
+            
 
 
 
