@@ -29,25 +29,25 @@ class SettingsController extends BaseController
     {
         $re['sections'] = Sections::orderBy('sort', 'ASC')->get(['id', 'title', 'theme', 'start_date', 'end_date', 'sort']);
 
-        $re['cancel_reason'] = CancelReason::get(['id', 'title']);
-        $re['packages'] = Package::get(['id', 'title', 'value']);
-        $re['status'] = Status::get(['id', 'title']);
-        $re['results'] = Results::get(['id', 'title']);
-        $re['priorities'] = Priority::get(['id', 'title']);
+        $re['cancel_reason'] = CancelReason::orderBy('sort', 'ASC')->get(['id', 'title', 'sort']);
+        $re['packages'] = Package::orderBy('sort', 'ASC')->get(['id', 'title', 'value', 'sort']);
+        $re['status'] = Status::orderBy('sort', 'ASC')->get(['id', 'title', 'sort']);
+        $re['results'] = Results::orderBy('sort', 'ASC')->get(['id', 'title', 'sort']);
+        $re['priorities'] = Priority::orderBy('sort', 'ASC')->get(['id', 'title', 'sort']);
 
-        $re['marital_status'] = MaritalStatus::get(['id', 'title']);
+        $re['marital_status'] = MaritalStatus::orderBy('sort', 'ASC')->get(['id', 'title', 'sort']);
 
-        $re['want_to_study'] = WantToStudy::get(['id', 'title']);
+        $re['want_to_study'] = WantToStudy::orderBy('sort', 'ASC')->get(['id', 'title', 'sort']);
 
-        $re['assigned_to'] = User::where('is_admin', 3)->get(['id', 'first_name', 'last_name']);
+        $re['assigned_to'] = User::where('is_admin', 3)->orderBy('sort', 'ASC')->get(['id', 'first_name', 'last_name']);
 
-        $re['applying_for'] = ApplyingFor::get(['id', 'title']);
+        $re['applying_for'] = ApplyingFor::orderBy('sort', 'ASC')->get(['id', 'title', 'sort']);
 
-        $re['goal'] = Goal::get(['id', 'title']);
+        $re['goal'] = Goal::orderBy('sort', 'ASC')->get(['id', 'title', 'sort']);
 
-        $re['payment_method'] = PaymentMethod::get(['id', 'title']);
+        $re['payment_method'] = PaymentMethod::orderBy('sort', 'ASC')->get(['id', 'title', 'sort']);
 
-        $re['eng_test'] = EngTest::get(['id', 'title']);
+        $re['eng_test'] = EngTest::orderBy('sort', 'ASC')->get(['id', 'title', 'sort']);
 
 
 

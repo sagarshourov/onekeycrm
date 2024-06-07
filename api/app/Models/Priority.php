@@ -15,7 +15,7 @@ class Priority extends Model
 
     protected $dates = ['deleted_at'];
     protected $fillable = [
-        'id','title'
+        'id','title' ,'sort'
     ];
 
 }

@@ -15,4 +15,9 @@ class WantToStudy extends Model
 
     protected $dates = ['deleted_at'];
 
+    protected $fillable = [
+        'id', 'title' , 'sort'
+    ];
+
+
 }

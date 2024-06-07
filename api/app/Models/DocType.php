@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class EngTest extends Model 
+class DocType extends Model
 {
 
-    protected $table = 'eng_test';
+    protected $table = 'doc_types';
     public $timestamps = true;
 
     use SoftDeletes;
@@ -20,4 +20,5 @@ class EngTest extends Model
     ];
 
 
+  
 }

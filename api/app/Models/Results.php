@@ -11,7 +11,7 @@ class Results extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'id','title'
+        'id','title' ,'sort'
     ];
 
 }
