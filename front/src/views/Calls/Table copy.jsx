@@ -278,7 +278,7 @@ const UsersTable = (props) => {
                       />
                     </div>
                   </td>
-                  <td className="w-40">{user.id}</td>
+                  <td className="w-40">{key+1}</td>
                   <td>
                     <Link
                       to="#"

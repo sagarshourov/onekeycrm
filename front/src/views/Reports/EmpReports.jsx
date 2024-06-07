@@ -3,10 +3,11 @@ import {
   AccordionGroup,
   AccordionItem,
   AccordionPanel,
-  Alert, LoadingIcon,
+  Alert,
+  LoadingIcon,
   Lucide,
   Modal,
-  ModalBody
+  ModalBody,
 } from "@/base-components";
 import { helper } from "@/utils/helper";
 import classnames from "classnames";
@@ -27,7 +28,7 @@ import {
   pLimit,
   pOffset,
   pStartDate,
-  pType
+  pType,
 } from "../../state/report-atom";
 import Table from "./Table";
 
@@ -187,8 +188,6 @@ const EmpReports = (props) => {
   };
 
   const handelRange = (date) => {
-
-
     setDaterange(date);
 
     if (dateMode) {
@@ -252,12 +251,9 @@ const EmpReports = (props) => {
       setAtomCancel(0);
       setCancel(0);
     }
-
- 
   };
 
   const handelCancel = (e) => {
-   
     setCancel(e.target.value);
     setAtomCancel(e.target.value);
 
@@ -272,6 +268,27 @@ const EmpReports = (props) => {
       setDateMode(false);
     } else {
       setDateMode(true);
+    }
+  };
+
+  const bulkUpdate = async (name, value) => {
+    const URL = adminApi() + "calls/0";
+    setLoading(true);
+
+    try {
+      const response = await axios.put(
+        URL,
+        { ids: allCheck, name: name, value: value },
+        {
+          headers,
+        }
+      );
+
+      if (response?.data?.success) {
+        window.location.reload();
+      }
+    } catch (err) {
+      setLoading(false);
     }
   };
 
@@ -301,7 +318,7 @@ const EmpReports = (props) => {
       </h2>
       <div className=" mt-5">
         <div className="intro-y flex flex-row mt-2">
-          <div className="basis-full lg:basis-7/12 grid grid-cols-1 lg:grid-cols-5 gap-4">
+          <div className="basis-full lg:basis-8/12 grid grid-cols-1 lg:grid-cols-6 gap-4">
             <div
               onClick={CallSwitch}
               className="dark-mode-switcher cursor-pointer shadow-md box border rounded-full w-auto  h-10 flex items-center justify-center z-50 "
@@ -357,7 +374,6 @@ const EmpReports = (props) => {
               </select>
             </div>
 
-           
             <div>
               <select
                 required
@@ -375,9 +391,28 @@ const EmpReports = (props) => {
                   ))}
               </select>
             </div>
+
+            <div>
+              {allCheck.length > 0 && (
+                <select
+                  name="results"
+                  onChange={(e) => bulkUpdate(e.target.name, e.target.value)}
+                  className="form-select"
+                >
+                  <option value="0">Results..</option>
+
+                  {setting.results &&
+                    setting.results.map((val, indx) => (
+                      <option key={indx} value={val?.id}>
+                        {val?.title}
+                      </option>
+                    ))}
+                </select>
+              )}
+            </div>
           </div>
 
-          <div className="basis-full lg:basis-5/12 flex flex-row-reverse pl-10">
+          <div className="basis-full lg:basis-4/12 flex flex-row-reverse pl-10">
             <div>
               <select
                 onChange={handelPageCount.bind(this)}
@@ -520,7 +555,6 @@ const EmpReports = (props) => {
         </div>
         {/* END: Data List */}
         {/* BEGIN: Pagination */}
-        
 
         {callData.state === "hasValue" && (
           <div className="intro-y  mt-5 col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">

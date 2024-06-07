@@ -132,7 +132,7 @@ class CallsController extends BaseController
     private function get_filter_cal($user_id, $field, $value, $off, $limit, $search, $order)
     {
 
-       
+
         $user = Auth::user();
 
 
@@ -175,7 +175,7 @@ class CallsController extends BaseController
         } else if ($user->is_admin && $user->is_admin == 3) {
             // return Calls::where(['assigned_to' => $user->id, $field => $value])->with($with)->orderBy('id', 'DESC')->offset($off)->limit($limit)->get();
 
-         
+
             if ($search == '0') {
 
                 // return $field.'='.$null;
@@ -183,9 +183,8 @@ class CallsController extends BaseController
 
                 return Calls::where([['assigned_to', '=', $user->id], [$field, '=',  $null]])->with($with)->orderBy('sort', $order)->offset($off)->limit($limit)->get();
             } else if ($field == 'sections' && $search != '0') {
-               
+
                 return Calls::where('assigned_to', '=', $user->id)->OrWhere('email', 'like', '%' . $query . '%')->OrWhere('first_name', 'like', '%' . $query . '%')->OrWhere('last_name', 'like', '%' . $query . '%')->with($with)->get();
-              
             } else {
                 return Calls::where([['assigned_to', '=', $user->id], [$field, '=',  $null], ['email', 'like', '%' . $query . '%']])->OrWhere([['assigned_to', '=', $user->id], [$field, '=',  $null], ['first_name', 'like', '%' . $query . '%']])->with($with)->get();
             }
@@ -198,12 +197,12 @@ class CallsController extends BaseController
                 return Calls::where([['assigned_to', '=', $user_id], [$field, '=',  $null], ['email', 'like', '%' . $query . '%']])->with($with)->get();
             }
         } else {
-         
+
             if ($search == '0') {
                 //return 'cacll';
                 return Calls::where($field,  $null)->with($with)->orderBy('sort', $order)->offset($off)->limit($limit)->get();
             } else if ($field == 'sections' && $search != '0') {
-                
+
                 return Calls::where('email', 'like', '%' . $query . '%')->OrWhere('whatsapp', 'like', '%' . $query . '%')->OrWhere('phone_number', 'like', '%' . $query . '%')->OrWhere('first_name', 'like', '%' . $query . '%')->OrWhere('last_name', 'like', '%' . $query . '%')->with($with)->get();
             } else {
                 return Calls::where([[$field, '=',  $null], ['email', 'like', '%' . $query . '%']])->OrWhere([[$field, '=',  $null], ['first_name', 'like', '%' . $query . '%']])->with($with)->get();
@@ -342,7 +341,7 @@ class CallsController extends BaseController
         $calls = Calls::where('assigned_to',   $user->id)
             ->offset($off)->limit($limit);
         if ($type == 10) {
-            $calls->where('ag', 1)->whereBetween('agree_date_sent', array($startDate, $endDate));
+            $calls->where('ag', 1)->whereBetween('agree_date_sent', [$startDate, $endDate]);
         } else if ($type == 11) {
             $calls->where('agreed_to_signed', 1);
         } else if ((int)$type != 0) {
@@ -351,7 +350,13 @@ class CallsController extends BaseController
 
 
         if ((int) $result == 1) {
-            $calls->where('results', 1)->whereBetween('cancel_date', array($startDate, $endDate));
+            if ($startDate == '2022-01-01' && $endDate == '2028-01-01') {
+                $calls->where('results', 1);
+            } else {
+                $calls->where('results', 1)->whereBetween('cancel_date', [$startDate, $endDate]);
+            }
+
+            //$calls->where('results', 1);
         } else if ((int) $result != 0) {
             $calls->where('results',  (int) $result);
         }
@@ -362,7 +367,7 @@ class CallsController extends BaseController
         }
 
 
-
+        //  return 'sa';
 
         return $this->sendResponse($calls->get(), 'Retrieve calls.');
     }
@@ -644,7 +649,7 @@ class CallsController extends BaseController
 
             if (isset($old_call[0]->email) && $old_call[0]->email !== '') { // instructions on 21th / may /2024 whatsapp video 2 
                 unset($input['email']);
-            } else if ($input['email'] != '') { 
+            } else if ($input['email'] != '') {
                 $messages = [
                     'unique' => 'taken',
                 ];
@@ -1089,10 +1094,7 @@ class CallsController extends BaseController
     public function update(Request $request, $id)
     {
 
-       
-
         if ($id == 0) {
-           // return 'update';
             if ($request->name == 'results' && $request->value == '4') { // when no answer selected its will go no answer section
                 Calls::whereIn('id', $request->ids)
                     ->update(['sections' => 5]);
@@ -1133,12 +1135,6 @@ class CallsController extends BaseController
                 Calls::whereIn('id', $request->ids)
                     ->update(['f_results' => $request->value]);
             }
-           
-            // if ($request->name == 'employee') {
-                
-            // }
-
-            
 
 
 
@@ -1261,8 +1257,8 @@ class CallsController extends BaseController
         } else {
             // $call_ids['fud'] = Calls::where('follow_up_date', '!=', null)->get(['id', 'first_name', 'last_name', 'follow_up_date']);
 
-            $call_ids['next'] = Calls::with('steps.next')->where('assigned_to', $user->id)->get(['id', 'first_name', 'last_name']);
-            $call_ids['csd'] = Calls::where('call_schedule_date', '!=', null)->get(['id', 'first_name', 'last_name', 'call_schedule_date']);
+            $call_ids['next'] = Calls::with('steps.next')->where('assigned_to', $user->id)->get(['id', 'first_name', 'last_name','assigned_to']);
+            $call_ids['csd'] = Calls::where('call_schedule_date', '!=', null)->get(['id', 'first_name', 'last_name', 'call_schedule_date','assigned_to']);
         }
 
         return $this->sendResponse($call_ids, 'Events Retrieve successfully.');

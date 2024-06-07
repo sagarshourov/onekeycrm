@@ -94,7 +94,7 @@ const CustomTable = (props) => {
 
             return (
               <tr key={key} className={"border-t pt-2" + dark}>
-                <td className="w-40">{user.id}</td>
+                <td className="w-40">{count}</td>
 
                 {cols !== null &&
                   cols.map((val, index) => {

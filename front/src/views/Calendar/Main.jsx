@@ -26,12 +26,12 @@ const headers = {
 import { filter } from "lodash";
 
 function applySortFilters(array, searchValue, user_id, callSwitch) {
-  // console.log(array);
+   console.log('sort',array);
   if (callSwitch) {
     return filter(array, (_items) => {
       if (_items !== null) {
         console.log('assign ',_items);
-        return _items?.ass_id === user_id;
+        return _items?.ass_id == user_id;
       }
     });
   } else {
@@ -119,6 +119,7 @@ const Events = (props) => {
   const loginData = useRecoilValue(loginState);
 
   const [search, setSearch] = useState("");
+  console.log("filter data", eventDatas.contents);
   const deleteEvent = async () => {
     const LOGIN_URL = adminApi() + "delete_event";
 
@@ -200,7 +201,7 @@ const Events = (props) => {
     callSwitch
   );
 
-  // console.log("filter data", eventDatas.contents);
+
 
   return (
     <>
