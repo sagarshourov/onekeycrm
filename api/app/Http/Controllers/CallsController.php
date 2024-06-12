@@ -13,7 +13,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\CallImport;
 use App\Imports\SingleSheetImport;
 
-
+use Illuminate\Support\Facades\DB;
 use App\Models\AssignEmployee;
 use App\Models\Package;
 use App\Models\Sections;
@@ -378,34 +378,51 @@ class CallsController extends BaseController
     {
 
         if ($type == 10) {
-            $calls = Calls::WhereIn('assigned_to', explode(',', $users))
-                ->where('ag', 1)
-                ->whereBetween('agree_date_sent', array($startDate, $endDate))
-                ->offset($off)->limit($limit)
-                ->get();
+            // $calls = Calls::WhereIn('assigned_to', explode(',', $users))
+            //     ->where('ag', 1)
+            //     ->whereBetween('agree_date_sent', array($startDate, $endDate))
+            //     ->offset($off)->limit($limit)
+            //     ->get();
+            $usersArray = explode(',', $users);
+
+                $calls =  DB::table('calls')
+            ->whereIn('assigned_to', $usersArray)
+            ->where('ag', 1)
+            ->whereBetween('agree_date_sent', [$startDate, $endDate])
+            ->offset($off)
+            ->limit($limit)
+            ->get();
+
+
+                
         } else if ($type == 11) {
-            $calls = Calls::WhereIn('assigned_to',  explode(',', $users))
+            $usersArray = explode(',', $users);
+            $calls = Calls::whereIn('assigned_to', $usersArray)
                 ->where('agreed_to_signed', 1)
-                ->whereBetween('agreement_signed_date', array($startDate, $endDate))
+                ->whereBetween('agreement_signed_date', [$startDate, $endDate])
                 ->offset($off)->limit($limit)
                 ->get();
         } else if ($type == 12) {
-            $calls = Calls::WhereIn('assigned_to',  explode(',', $users))
-                ->whereBetween('first_contact', array($startDate, $endDate))
+            $usersArray = explode(',', $users);
+            $calls = Calls::whereIn('assigned_to', $usersArray)
+                ->whereBetween('first_contact', [$startDate, $endDate])
                 ->offset($off)->limit($limit)
                 ->get();
         } else if ($type == 13) {
-            $calls = Calls::WhereIn('assigned_to',  explode(',', $users))
-                ->whereBetween('follow_up_date', array($startDate, $endDate))
+            $usersArray = explode(',', $users);
+            $calls = Calls::whereIn('assigned_to', $usersArray)
+                ->whereBetween('follow_up_date', [$startDate, $endDate])
                 ->offset($off)->limit($limit)
                 ->get();
         } else if ($type == 14) {
-            $calls = Calls::WhereIn('assigned_to',  explode(',', $users))
-                ->whereBetween('cancel_date', array($startDate, $endDate))
+            $usersArray = explode(',', $users);
+            $calls = Calls::whereIn('assigned_to', $usersArray)
+                ->whereBetween('cancel_date', [$startDate, $endDate])
                 ->offset($off)->limit($limit)
                 ->get();
         } else {
-            $calls = Calls::WhereIn('assigned_to', explode(',', $users))
+            $usersArray = explode(',', $users);
+            $calls = Calls::whereIn('assigned_to', $usersArray)
                 ->where('status', $type)
                 ->offset($off)->limit($limit)
                 // ->whereBetween('created_at', array($startDate, $endDate))

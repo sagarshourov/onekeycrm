@@ -464,7 +464,7 @@ const UsersTable = (props) => {
                           </option>
                         ))}
                     </select> */}
-
+                    
 
                     {user?.statu?.title}
                   </td>

@@ -39,8 +39,22 @@ import { helper } from "@/utils/helper";
 import { dashBoardSelect } from "../../state/dashboard-atom";
 const token = localStorage.token && localStorage.getItem("token");
 import { useRecoilValue } from "recoil";
+function getMonthName(month) {
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[month];
+}
 function Main() {
-  const [dateFilter, setDateFilter] = useState("1 Feb, 2023 - 31 Mar, 2025");
+
+var currentDate = new Date();
+
+var firstDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), +1);
+var lastDate = new Date(currentDate.getFullYear(), currentDate.getMonth() +1, +0);
+
+var formattedFirstDate = `${firstDate.getDate()} ${getMonthName(firstDate.getMonth())}, ${firstDate.getFullYear()}`;
+var formattedLastDate = `${lastDate.getDate()} ${getMonthName(lastDate.getMonth())}, ${lastDate.getFullYear()}`;
+var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
+
+  const [dateFilter, setDateFilter] = useState(dateRange);
   const [teamFilter, setTeamFilter] = useState(0);
   const handelRange = (date) => {
     setDateFilter(date);
@@ -107,7 +121,7 @@ function Main() {
                       minYear: 1990,
                       maxYear: null,
                       months: true,
-                      years: true,
+                      years: true
                     },
                   }}
                   className="form-control sm:w-56 box pl-10"
