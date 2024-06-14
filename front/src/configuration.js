@@ -8,9 +8,9 @@ export const getBaseApi = () => `https://api.onekeycrm.us/api/`;
 
 export const  adminApi = () => `https://api.onekeycrm.us/api/admin/`;
 
-//export const getBaseApi = () => `http://localhost:8000/api/`;
+// export const getBaseApi = () => `http://localhost:8000/api/`;
 
-//export const adminApi = () => `http://localhost:8000/api/admin/`;
+// export const adminApi = () => `http://localhost:8000/api/admin/`;
 
 export const handelError = (error) => {
   console.log(error);

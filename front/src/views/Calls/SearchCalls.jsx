@@ -9,7 +9,7 @@ import {
   AccordionItem,
 } from "@/base-components";
 
-import { useState } from "react";
+import { useState,useRef  } from "react";
 
 import { useParams, Link } from "react-router-dom";
 
@@ -81,7 +81,7 @@ const AdminUsers = (props) => {
 
   const valueQuery = useSetRecoilState(valueState);
 
- 
+  const inputRef = useRef(null);
 
   const dragStart = (e, id) => {
     setRow(e.target);
@@ -182,6 +182,9 @@ const AdminUsers = (props) => {
     valueQuery(null);
     setSearch("");
     limitQuery(20);
+    inputRef.current.value = "";
+
+    console.log('reset click',inputRef);
   };
 
   const handelSection = (e) => {
@@ -395,6 +398,7 @@ const AdminUsers = (props) => {
             <div className="w-full">
               <div className=" text-slate-500">
                 <input
+                ref={inputRef}
                   onChange={(e)=>handelSearch(e)}
                   type="text"
                   defaultValue={search}
@@ -415,7 +419,7 @@ const AdminUsers = (props) => {
                 )}
             </button>
 
-            <button onClick={resetCall} className="btn btn-danger text-white">
+            <button  onClick={(e)=>resetCall(e)} className="btn btn-danger text-white">
               Reset Search{" "}
             </button>
           </div>

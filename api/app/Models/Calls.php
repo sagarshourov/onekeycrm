@@ -194,7 +194,8 @@ class Calls extends Model
             return [
                 'id' => $status->id,
                 'p' => number_format($per, 2),
-                'title' => $status->title
+                'title' => $status->title,
+                'total' => $packageTotal
             ];
         });
 
@@ -232,7 +233,8 @@ class Calls extends Model
         return array(
             number_format($marriedPercentage, 2),
             number_format($unmarriedPercentage, 2),
-            number_format($applyingPercentage, 2)
+            number_format($applyingPercentage, 2),
+            $maritalTotal
         );
     }
 
@@ -267,7 +269,7 @@ class Calls extends Model
             $f1Count,
             $f2Count
         );
-
+        $return['total'] =  $caseTypeTotal;
         return $return;
     }
 
@@ -301,6 +303,7 @@ class Calls extends Model
             number_format($hotPercentage, 2),
             number_format($warmPercentage, 2),
             number_format($coldPercentage, 2),
+            $statusTotal
         );
     }
 
@@ -334,8 +337,8 @@ class Calls extends Model
 
         return array(
             number_format($agYesPercentage, 2),
-            number_format($agNoPercentage, 2)
-
+            number_format($agNoPercentage, 2),
+            $totalUsers
         );
     }
 
@@ -352,7 +355,7 @@ class Calls extends Model
 
         $agToSigned = $agreedToSignedCounts->get(1, 0);
         $notAgreeToSigned = $agreedToSignedCounts->get(0, 0);
-
+      //  return  $notAgreeToSigned;
 
         $agSignedtotal = self::whereHas('userBelong', function ($query) use ($team) {
             // Filter by user type 1 or 2
@@ -362,14 +365,15 @@ class Calls extends Model
         if ($agSignedtotal == 0) return [];
 
 
-        $agSignedPercentage = ($agToSigned / $agSignedtotal) * 100;
-        $agNoSignedPercentage = ($notAgreeToSigned / $agSignedtotal) * 100;
+        $agSignedPercentage = $agToSigned > 0 ? number_format( (($agToSigned / $agSignedtotal) * 100),2) : 0;
+        $agNoSignedPercentage =  $notAgreeToSigned > 0 ? number_format((($notAgreeToSigned / $agSignedtotal) * 100),2) : 0;
 
 
 
         $return['agsigned'] = array(
-            number_format($agSignedPercentage, 2),
-            number_format($agNoSignedPercentage, 2),
+            $agSignedPercentage,
+            $agNoSignedPercentage,
+            $agSignedtotal
         );
     }
 
@@ -458,7 +462,8 @@ class Calls extends Model
         $return['marital_status'] = array(
             number_format($marriedPercentage, 2),
             number_format($unmarriedPercentage, 2),
-            number_format($applyingPercentage, 2)
+            number_format($applyingPercentage, 2),
+            $maritalTotal
         );
 
 
@@ -481,7 +486,7 @@ class Calls extends Model
             $f1Count,
             $f2Count
         );
-
+        $return['case_type']['total'] = $caseTypeTotal;
 
         $hotCount = self::whereBetween('created_at', [$start_date, $end_date])->where('status', 1)->count();
         $warmCount = self::whereBetween('created_at', [$start_date, $end_date])->where('status', 2)->count();
@@ -497,6 +502,7 @@ class Calls extends Model
             number_format($hotPercentage, 2),
             number_format($warmPercentage, 2),
             number_format($coldPercentage, 2),
+            $statusTotal
         );
 
 
@@ -514,7 +520,8 @@ class Calls extends Model
             return [
                 'id' => $status->id,
                 'p' => number_format($per, 2),
-                'title' => $status->title
+                'title' => $status->title,
+                'total'=> $packagetotal
             ];
         });
 
@@ -535,7 +542,8 @@ class Calls extends Model
 
         $return['agreement_sent'] = array(
             number_format($agYesPercentage, 2),
-            number_format($agNoPercentage, 2)
+            number_format($agNoPercentage, 2),
+            $totalUsers
 
         );
 
@@ -557,6 +565,7 @@ class Calls extends Model
         $return['agsigned'] = array(
             number_format($agSignedPercentage, 2),
             number_format($agNoSignedPercentage, 2),
+            $agSignedtotal
         );
 
 

@@ -210,7 +210,7 @@ function applyAllFilters(array, searchValue, sections, user_id, priority) {
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
+          -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -239,7 +239,7 @@ function applyAllFilters(array, searchValue, sections, user_id, priority) {
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
+          -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -283,7 +283,7 @@ function applySortFilters(array, searchValue, sec, user_id, priority) {
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
+          -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -315,7 +315,7 @@ function applySortFilters(array, searchValue, sec, user_id, priority) {
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
+          -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -621,7 +621,7 @@ const AdminUsers = (props) => {
                 className="btn btn-elevated-primary shadow-md mr-2 py-2"
                 to="/calls/add"
               >
-                Add New Call
+                Add New 
               </Link>
             )}
 
@@ -712,53 +712,58 @@ const AdminUsers = (props) => {
             ) : (
               logindata.role === 1 && (
                 <>
-                  <select
-                    name="assigned_to"
-                    onChange={(e) => EmployeeFilter(e.target.value)}
-                    className="form-select"
-                  >
-                    <option value="0">Employees ..</option>
-                    {usersData.state === "hasValue" &&
-                      usersData.contents.map((val, indx) => (
-                        <option key={indx} value={val?.id}>
-                          {val?.first_name} {val?.last_name}
-                        </option>
-                      ))}
-                  </select>
+
                   <Link
                     className="btn btn-elevated-success text-white shadow-md mr-2 py-2"
                     to="/calls/import"
                   >
-                    Import Excel
+                    Import 
                   </Link>
 
                   <button
                     onClick={exportExcel}
                     className="btn btn-elevated-warning text-white shadow-md mr-2 py-2"
                   >
-                    Export Excel
+                    Export
                   </button>
                 </>
               )
             )}
 
             {logindata.role !== 3 && (
-              <div className="">
-                <div
-                  onClick={CallSwitch}
-                  className="dark-mode-switcher cursor-pointer shadow-md  bottom-0 left-0 box border rounded-full w-36 h-10 flex items-center justify-center z-50 "
+              <>
+
+                <select
+                  name="assigned_to"
+                  onChange={(e) => EmployeeFilter(e.target.value)}
+                  className="form-select"
                 >
-                  <div className="mr-4 text-slate-600 dark:text-slate-200">
-                    Switch Calls
-                  </div>
+                  <option value="0">Employees ..</option>
+                  {usersData.state === "hasValue" &&
+                    usersData.contents.map((val, indx) => (
+                      <option key={indx} value={val?.id}>
+                        {val?.first_name} {val?.last_name}
+                      </option>
+                    ))}
+                </select>
+
+                <div className="">
                   <div
-                    className={classnames({
-                      "dark-mode-switcher__toggle border": true,
-                      "dark-mode-switcher__toggle--active": callSwitch,
-                    })}
-                  ></div>
+                    onClick={CallSwitch}
+                    className="dark-mode-switcher cursor-pointer shadow-md  bottom-0 left-0 box border rounded-full w-36 h-10 flex items-center justify-center z-50 "
+                  >
+                    <div className="mr-4 text-slate-600 dark:text-slate-200">
+                      Switch Calls
+                    </div>
+                    <div
+                      className={classnames({
+                        "dark-mode-switcher__toggle border": true,
+                        "dark-mode-switcher__toggle--active": callSwitch,
+                      })}
+                    ></div>
+                  </div>
                 </div>
-              </div>
+              </>
             )}
           </div>
           {/* <div className="hidden md:block mx-auto text-slate-500">

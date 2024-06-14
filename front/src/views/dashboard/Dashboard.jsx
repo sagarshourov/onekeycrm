@@ -40,19 +40,19 @@ import { dashBoardSelect } from "../../state/dashboard-atom";
 const token = localStorage.token && localStorage.getItem("token");
 import { useRecoilValue } from "recoil";
 function getMonthName(month) {
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return months[month];
+  var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return months[month];
 }
 function Main() {
 
-var currentDate = new Date();
+  var currentDate = new Date();
 
-var firstDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), +1);
-var lastDate = new Date(currentDate.getFullYear(), currentDate.getMonth() +1, +0);
+  var firstDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), +1);
+  var lastDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, +0);
 
-var formattedFirstDate = `${firstDate.getDate()} ${getMonthName(firstDate.getMonth())}, ${firstDate.getFullYear()}`;
-var formattedLastDate = `${lastDate.getDate()} ${getMonthName(lastDate.getMonth())}, ${lastDate.getFullYear()}`;
-var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
+  var formattedFirstDate = `${firstDate.getDate()} ${getMonthName(firstDate.getMonth())}, ${firstDate.getFullYear()}`;
+  var formattedLastDate = `${lastDate.getDate()} ${getMonthName(lastDate.getMonth())}, ${lastDate.getFullYear()}`;
+  var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
 
   const [dateFilter, setDateFilter] = useState(dateRange);
   const [teamFilter, setTeamFilter] = useState(0);
@@ -137,14 +137,14 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
                         <Lucide icon="PieChart" />
                       </div>
                       <div className="ml-auto">
-                        <Tippy
+                        {/* <Tippy
                           tag="div"
                           className="report-box__item__indicator text-success cursor-pointer"
                           content="5.2% Higher than last month"
                         >
                           +5.2%
                           <Lucide icon="ArrowUp" className="w-4 h-4 ml-0.5" />
-                        </Tippy>
+                        </Tippy> */}
                       </div>
                     </div>
                     <div className="text-2xl font-medium leading-7 mt-6">
@@ -160,19 +160,19 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
                 </div>
                 <div className="report-box__item py-5 xl:py-0 px-5 sm:!border-t-0 col-span-12 sm:col-span-6 xl:col-span-3">
                   <div className="report-box__content">
-                    <div className="flex">
+                    <div className="f lex">
                       <div className="report-box__item__icon text-pending bg-pending/20 border border-pending/20 flex items-center justify-center rounded-full">
                         <Lucide icon="CreditCard" />
                       </div>
                       <div className="ml-auto">
-                        <Tippy
+                        {/* <Tippy
                           tag="div"
                           className="report-box__item__indicator text-danger cursor-pointer"
                           content="2% Lower than last month"
                         >
                           -2%
                           <Lucide icon="ArrowDown" className="w-4 h-4 ml-0.5" />
-                        </Tippy>
+                        </Tippy> */}
                       </div>
                     </div>
                     <div className="text-2xl font-medium leading-7 mt-6">
@@ -193,14 +193,14 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
                         <Lucide icon="ShoppingBag" />
                       </div>
                       <div className="ml-auto">
-                        <Tippy
+                        {/* <Tippy
                           tag="div"
                           className="report-box__item__indicator text-success cursor-pointer"
                           content="4.1% Higher than last month"
                         >
                           +4.1%
                           <Lucide icon="ArrowDown" className="w-4 h-4 ml-0.5" />
-                        </Tippy>
+                        </Tippy> */}
                       </div>
                     </div>
                     <div className="text-2xl font-medium leading-7 mt-6">
@@ -297,7 +297,7 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
                     <ReportPieChart1
                       className="mt-2 z-10 relative"
                       height={210}
-                      data={dashBoardData.marital_status}
+                      data={[dashBoardData.marital_status[0], dashBoardData.marital_status[1], dashBoardData.marital_status[2]]}
                       labels={["Married", "Unmarried", "Applying"]}
                     />
                   )}
@@ -330,6 +330,15 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
                       {dashBoardData.marital_status &&
                         dashBoardData.marital_status[2]}
                       %
+                    </span>
+                  </div>
+                  <div className="flex items-center mt-4 border-t pt-3">
+                    <div className="w-2 h-2 bg-primary/50 border border-primary/50 rounded-full mr-3"></div>
+                    <span className="truncate">Total = </span>
+                    <span className="ml-auto">
+                      {dashBoardData.marital_status &&
+                        dashBoardData.marital_status[3]}
+
                     </span>
                   </div>
                 </div>
@@ -373,6 +382,15 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
                     %
                   </span>
                 </div>
+                <div className="flex items-center mt-4 border-t pt-3">
+                  <div className="w-2 h-2 bg-primary/50 border border-primary/50 rounded-full mr-3"></div>
+                  <span className="truncate">Total = </span>
+                  <span className="ml-auto">
+                    {dashBoardData.case_type.total &&
+                      dashBoardData?.case_type?.total
+                    }
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -388,7 +406,7 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
                   <ReportPieChart1
                     className="mt-2 z-10 relative"
                     height={210}
-                    data={dashBoardData.status}
+                    data={[dashBoardData.status[0], dashBoardData.status[1], dashBoardData.status[2]]}
                     labels={["Cold", "Hot", "Warm"]}
                   />
                 </div>
@@ -417,6 +435,13 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
                     {dashBoardData.status && dashBoardData.status[2]}%
                   </span>
                 </div>
+                <div className="flex items-center mt-4 border-t pt-3">
+                  <div className="w-2 h-2 bg-primary/50 border border-primary/50 rounded-full mr-3"></div>
+                  <span className="truncate">Total = </span>
+                  <span className="ml-auto">
+                    {dashBoardData.status[3] && dashBoardData.status[3]}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -425,7 +450,7 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
             <div className="intro-y flex items-center h-10">
               <h2 className="text-lg font-medium truncate mr-5">
                 {" "}
-                Agreement Sent
+                Agreement 
               </h2>
             </div>
             <div className="intro-y box p-5 mt-4">
@@ -434,7 +459,7 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
                   <ReportPieChart1
                     className="mt-2 z-10 relative"
                     height={210}
-                    data={dashBoardData.agreement_sent}
+                    data={[dashBoardData.agreement_sent[0], dashBoardData.agreement_sent[1]]}
                     labels={["Yes", "No"]}
                   />
                 </div>
@@ -458,6 +483,15 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
                     %
                   </span>
                 </div>
+                <div className="flex items-center mt-4 border-t pt-4">
+                  <div className="w-2 h-2 bg-primary/50 border border-primary/50 rounded-full mr-3"></div>
+                  <span className="truncate">Total = </span>
+                  <span className="ml-auto">
+                    {dashBoardData.agreement_sent &&
+                      dashBoardData.agreement_sent[2]}
+                    
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -475,7 +509,7 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
                   <ReportPieChart1
                     className="mt-2 z-10 relative"
                     height={210}
-                    data={dashBoardData.agsigned}
+                    data={dashBoardData.agsigned && [dashBoardData.agsigned[0], dashBoardData.agsigned[1]]}
                     labels={["Yes", "No"]}
                   />
                 </div>
@@ -496,6 +530,15 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
                   <span className="ml-auto">
                     {" "}
                     {dashBoardData.agsigned && dashBoardData.agsigned[1]}%
+                  </span>
+                </div>
+                <div className="flex items-center mt-4 border-t pt-3">
+                  <div className="w-2 h-2 bg-primary/50 border border-primary/50 rounded-full mr-3"></div>
+
+                  <span className="truncate">Total = </span>
+                  <span className="ml-auto">
+                    {" "}
+                    {dashBoardData.agsigned && dashBoardData.agsigned[2]}
                   </span>
                 </div>
               </div>
@@ -534,6 +577,7 @@ var dateRange = `${formattedFirstDate} - ${formattedLastDate}`;
                     );
                   })}
               </div>
+              
             </div>
           </div>
         </div>
