@@ -385,16 +385,13 @@ class CallsController extends BaseController
             //     ->get();
             $usersArray = explode(',', $users);
 
-                $calls =  DB::table('calls')
-            ->whereIn('assigned_to', $usersArray)
-            ->where('ag', 1)
-            ->whereBetween('agree_date_sent', [$startDate, $endDate])
-            ->offset($off)
-            ->limit($limit)
-            ->get();
-
-
-                
+            $calls =  DB::table('calls')
+                ->whereIn('assigned_to', $usersArray)
+                ->where('ag', 1)
+                ->whereBetween('agree_date_sent', [$startDate, $endDate])
+                ->offset($off)
+                ->limit($limit)
+                ->get();
         } else if ($type == 11) {
             $usersArray = explode(',', $users);
             $calls = Calls::whereIn('assigned_to', $usersArray)
@@ -523,21 +520,39 @@ class CallsController extends BaseController
         if (count($data) == 0) {
             return;
         }
+        //  return $data;
+        $userid = Auth::id();
 
         $this->delete_extra($call_id, $group);
 
+
+        // unset($data['created_at']);
         foreach ($data as $key => $groups) {
 
-            $ext = ExtraGroups::create([
-                'call_id' => (int) $call_id,
-                'groups' => $group
-            ]);
+
+
+
+            $date = isset($groups['created_at']) ? $groups['created_at'] : '';
+            $user_id = isset($groups['user_id']) ? $groups['user_id'] :  $userid;
+            $ext = ExtraGroups::create(
+
+                [
+                    'call_id' => (int) $call_id,
+                    'groups' => $group,
+                    'user_id' => $user_id,
+                    'created_at' => $date
+                ]
+            );
+            // unset($groups['created_at']);
             foreach ($groups as $field => $val) {
-                ExtraValues::create([
-                    'field' => $field,
-                    'value' => $val,
-                    'ext_id' => $ext->id
-                ]);
+
+                if ($field != 'created_at' && $field != 'user_id' ) {
+                    ExtraValues::create([
+                        'field' => $field,
+                        'value' => $val,
+                        'ext_id' => $ext->id
+                    ]);
+                }
             }
         }
     }
@@ -656,7 +671,7 @@ class CallsController extends BaseController
         //
         $input = $request->all();
 
-
+        //  return $this->sendResponse($input['my_step'][0]['created_at'], 3);
 
 
         if (isset($input['id'])) {
@@ -697,21 +712,7 @@ class CallsController extends BaseController
                     $input['follow_up_notes'] = $end['follow_up_notes'];
 
                     $input['results'] =  $end['f_results'];
-                    //return $this->sendResponse($input, 'Call Update successfully.');
-                    // if ($end['f_results'] == 3 && $input['cancel_reason'] != 0) { 
-                    //     $input['cancel_reason']=0;
-                    // }
 
-
-                    // if ($end['f_results'] == 1 && $input['cancel_reason'] != 0) {  //GO TO CANCEL
-                    //     $input['results'] = 1;
-                    //     // $input['sort'] =  $last->sort + 1; //COMMENTED ON 29.10.23
-
-                    // } else if ($end['f_results'] == 2) {
-                    //     $input['results'] = 2;
-                    // } else {
-                    //     $input['results'] = (int) $end['f_results'];
-                    // }
                     $this->extra_group($input['follow_up'], 'follow_up',  $id);
                 } else {
                     if (isset($input['f_results']) && (int) $input['f_results'] == 4) {
@@ -909,7 +910,7 @@ class CallsController extends BaseController
         $user = Auth::user();
 
         //
-        $call =  Calls::where('id', $id)->with(['extra.values', 'versions.user', 'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user'])->first();
+        $call =  Calls::where('id', $id)->with(['extra.values', 'extra.user', 'versions.user', 'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user'])->first();
         // return $this->sendResponse($call, 'Single Call retrieve successfully.');
 
         if ($user->is_admin == 3 && isset($call->assigned_to) && $user->id == $call->assigned_to) {
@@ -1274,8 +1275,8 @@ class CallsController extends BaseController
         } else {
             // $call_ids['fud'] = Calls::where('follow_up_date', '!=', null)->get(['id', 'first_name', 'last_name', 'follow_up_date']);
 
-            $call_ids['next'] = Calls::with('steps.next')->where('assigned_to', $user->id)->get(['id', 'first_name', 'last_name','assigned_to']);
-            $call_ids['csd'] = Calls::where('call_schedule_date', '!=', null)->get(['id', 'first_name', 'last_name', 'call_schedule_date','assigned_to']);
+            $call_ids['next'] = Calls::with('steps.next')->where('assigned_to', $user->id)->get(['id', 'first_name', 'last_name', 'assigned_to']);
+            $call_ids['csd'] = Calls::where('call_schedule_date', '!=', null)->get(['id', 'first_name', 'last_name', 'call_schedule_date', 'assigned_to']);
         }
 
         return $this->sendResponse($call_ids, 'Events Retrieve successfully.');

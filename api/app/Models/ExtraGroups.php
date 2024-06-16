@@ -16,7 +16,7 @@ class ExtraGroups extends Model
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
-        'id', 'groups', 'call_id'
+        'id', 'groups', 'call_id', 'user_id' ,'created_at'
     ];
 
     public function next()
@@ -28,6 +28,10 @@ class ExtraGroups extends Model
     public function values()
     {
         return $this->hasMany(ExtraValues::class, 'ext_id', 'id')->select('id', 'ext_id', 'field', 'value');
+    }
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id')->select('id', 'first_name', 'last_name', 'is_admin');
     }
 
     public function calls()

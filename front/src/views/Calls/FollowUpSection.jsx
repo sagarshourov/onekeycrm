@@ -1,5 +1,6 @@
 import { Lucide } from "@/base-components";
-
+import { helper } from "@/utils/helper";
+import { loginState } from "../../state/login-atom";
 const FollowUpSection = (props) => {
   const { index, data, setting, deleteFollowUp, handelSelect, onChange } =
     props;
@@ -7,7 +8,7 @@ const FollowUpSection = (props) => {
   //console.log("followup", data);
 
   return (
-    <div className="p-2 lg:p-5 md:mt-5  border-t relative">
+    <div className="p-2 lg:p-5  border-t relative">
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 ">
         <div className="intro-x ">
           <label className="form-label"> Follow Up Call Date</label>
@@ -16,11 +17,25 @@ const FollowUpSection = (props) => {
               <Lucide icon="Calendar" className="w-4 h-4" />
             </div>
             <input
+              type="hidden"
+              name={"follow_up[" + index + "][created_at]"}
+              defaultValue={
+                data.created_at ? data.created_at : helper.formatCurrentDate()
+              }
+            />
+            <input
+              type="hidden"
+              name={"follow_up[" + index + "][user_id]"}
+              defaultValue={data.user_id ? data.user_id : loginState.userId}
+            />
+            <input
               type="date"
               name={"follow_up[" + index + "][follow_up_date]"}
               className=" pl-12 form-control"
               onChange={(e) => onChange(e.target.value, index, 0)}
-              defaultValue={data.values && data.values[0] ? data.values[0].value : ""}
+              defaultValue={
+                data.values && data.values[0] ? data.values[0].value : ""
+              }
             />
           </div>
         </div>
@@ -32,7 +47,9 @@ const FollowUpSection = (props) => {
             onChange={(e) => handelSelect(e, index)}
             name={"follow_up[" + index + "][f_results]"}
             className="form-control"
-            defaultValue={data.values && data.values[1] ? data.values[1].value : ""}
+            defaultValue={
+              data.values && data.values[1] ? data.values[1].value : ""
+            }
           >
             <option value="0">Select...</option>
 
@@ -52,39 +69,21 @@ const FollowUpSection = (props) => {
             className="form-control"
             placeholder=""
             onChange={(e) => onChange(e.target.value, index, 2)}
-            defaultValue={data.values && data.values[2] ? data.values[2].value : ""}
+            defaultValue={
+              data.values && data.values[2] ? data.values[2].value : ""
+            }
           />
         </div>
-        {/* <div className="intro-y">
-          <label className="form-label"> Agreed to Pay</label>
-          <select
-            name={"follow_up[" + index + "][agreed_to_pay]"}
-            className="form-control"
-            value={data.values && data.values[3] ? data.values[3].value : ""}
-            onChange={(e) => onChange(e.target.value, index, 3)}
-          >
-            <option value="0">No</option>
-            <option value="1">Yes</option>
-          </select>
-        </div>
-        <div className="intro-y">
-          <label className="form-label"> Payment Method</label>
-          <select
-            className="form-control"
-            name={"follow_up[" + index + "][payment_method]"}
-            value={data.values && data.values[4] ? data.values[4].value : ""}
-            onChange={(e) => onChange(e.target.value, index, 4)}
-          >
-            <option value="0">Select ... </option>
-
-            {setting.payment_method &&
-              setting.payment_method.map((val, indx) => (
-                <option key={indx} value={val.id}>
-                  {val?.title}
-                </option>
-              ))}
-          </select>
-        </div> */}
+      </div>
+      <div>
+        <label className="form-label mt-3 ">
+          {" "}
+          Add By{" "}
+          <a className="text-info" href={"profile/" + data?.user?.id}>
+            {data.user && data?.user?.first_name + " " + data?.user?.last_name}
+          </a>{" "}
+          at {helper.formatDate(data?.created_at, "MMMM D, YYYY h:mm A")}
+        </label>
       </div>
       <button
         type="button"
