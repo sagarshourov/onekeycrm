@@ -68,7 +68,7 @@ const MySection = (props) => {
         <label className="form-label mt-3 ">
           {" "}
           Add By{" "}
-          <a className="text-info" href={"profile/" + data?.user?.id}>
+          <a className="text-info" href={"/profile/" + data?.user?.id}>
             {data.user && data?.user?.first_name + " " + data?.user?.last_name}
           </a>{" "}
           at {helper.formatDate(data?.created_at, "MMMM D, YYYY h:mm A")}
