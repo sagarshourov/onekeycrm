@@ -1,11 +1,13 @@
 import { Lucide } from "@/base-components";
 import { helper } from "@/utils/helper";
 import { loginState } from "../../state/login-atom";
-import { useRecoilValue , useRecoilState} from "recoil";
+import { useRecoilValue, useRecoilState } from "recoil";
 const MySection = (props) => {
   const { index, data, setting, deleteFollowUp, onChange } = props;
   const loginVal = useRecoilValue(loginState);
-  console.log(loginVal);
+  // console.log(loginVal);
+
+
   return (
     <div className="p-2 lg:p-5   border-t relative">
       <div className="grid grid-cols-1 lg:grid-cols-7  gap-4 ">
@@ -33,7 +35,7 @@ const MySection = (props) => {
               className=" pl-12 form-control"
               onChange={(e) => onChange(e.target.value, index, 0)}
               defaultValue={
-                data.values && data.values[0] ? data.values[0].value : ""
+                data.values && helper.findVaue(data.values, "next_step_date")
               }
             />
           </div>
@@ -46,7 +48,7 @@ const MySection = (props) => {
             onChange={(e) => onChange(e.target.value, index, 1)}
             className=" form-control"
             defaultValue={
-              data.values && data.values[1] ? data.values[1].value : ""
+              data.values && helper.findVaue(data.values, "next_step_time")
             }
           />
         </div>
@@ -59,7 +61,7 @@ const MySection = (props) => {
             placeholder=""
             onChange={(e) => onChange(e.target.value, index, 2)}
             defaultValue={
-              data.values && data.values[2] ? data.values[2].value : ""
+              data.values && helper.findVaue(data.values, "next_step_notes")
             }
           />
         </div>

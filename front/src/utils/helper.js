@@ -152,6 +152,18 @@ const helpers = {
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   },
+  findVaue(data, field) {
+    var re = "";
+    data.some((val) => {
+      if (val.field === field) {
+        re = val.value;
+        return true; // Stop iterating once we find the match
+      }
+      return false;
+    });
+    console.log("e", re);
+    return re;
+  },
 };
 
 export { helpers as helper };

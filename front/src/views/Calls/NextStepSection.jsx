@@ -1,3 +1,5 @@
+import { helper } from "@/utils/helper";
+
 const NextStepSection = (props) => {
   const { data, theme, title, handelGo } = props;
 
@@ -7,8 +9,9 @@ const NextStepSection = (props) => {
     var time = "";
     if (arr.extra && arr.extra.length > 0) {
       arr.extra.map((dat, index) => {
+        console.log('sa', dat);
         if (dat.groups == group) {
-          time = dat.values[2].value ? dat.values[2].value : '' ;
+          time = dat.values &&  helper.findVaue(dat.values, "next_step_time")
         }
       });
     }

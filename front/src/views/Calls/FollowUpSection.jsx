@@ -34,7 +34,7 @@ const FollowUpSection = (props) => {
               className=" pl-12 form-control"
               onChange={(e) => onChange(e.target.value, index, 0)}
               defaultValue={
-                data.values && data.values[0] ? data.values[0].value : ""
+                data.values &&  helper.findVaue(data.values, "follow_up_date")
               }
             />
           </div>
@@ -48,7 +48,7 @@ const FollowUpSection = (props) => {
             name={"follow_up[" + index + "][f_results]"}
             className="form-control"
             defaultValue={
-              data.values && data.values[1] ? data.values[1].value : ""
+              data.values &&  helper.findVaue(data.values, "f_results")
             }
           >
             <option value="0">Select...</option>
@@ -70,7 +70,7 @@ const FollowUpSection = (props) => {
             placeholder=""
             onChange={(e) => onChange(e.target.value, index, 2)}
             defaultValue={
-              data.values && data.values[2] ? data.values[2].value : ""
+              data.values &&  helper.findVaue(data.values, "follow_up_notes")
             }
           />
         </div>
