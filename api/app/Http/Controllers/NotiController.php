@@ -82,10 +82,17 @@ class NotiController extends BaseController
         // }
 
 
-        $input = $request->all();
-        $input['user_id'] =  $request->user_id;
-        Notifications::create($input);
+        // type 4 when notification came to my self
 
+        $input = $request->all();
+        if ($input['type'] == 4) {
+            Calls::withTrashed()->where('id', (int) $input['call_id'])
+                    ->update(['sections' => null, 'results' => 3, 'assigned_date' => date("Y-m-d H:i:s")]);
+
+        } else {
+            $input['user_id'] =  $request->user_id;
+            Notifications::create($input);
+        }
 
         return $this->sendResponse($this->get_noti(), 'Notifications Add successfully.');
     }
@@ -133,7 +140,7 @@ class NotiController extends BaseController
         }
         if ($request->type == 2) {  // reject 
 
-            $noti = Notifications::where('id', (int)  $id)->update(['is_read' => $request->is_read, 'content'=>'The transfer was rejected', 'note' => $request->note, 'admin_id' => $request->admin_id, 'approve' => 0]);
+            $noti = Notifications::where('id', (int)  $id)->update(['is_read' => $request->is_read, 'content' => 'The transfer was rejected', 'note' => $request->note, 'admin_id' => $request->admin_id, 'approve' => 0]);
             return $this->sendResponse(array('noti' => $this->get_noti(), 'call' => Calls::withTrashed()->with(['user'])->where('id', (int)$request->call_id)->first()), 'Notifications updated  successfully.');
         } else {
             $noti = Notifications::where('id', (int)  $id)->update(['is_read' => $request->is_read]);

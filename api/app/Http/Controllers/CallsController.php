@@ -444,7 +444,7 @@ class CallsController extends BaseController
         $validator = Validator::make($input, $rules);
 
         if ($validator->fails()) {
-            $call =  Calls::withTrashed()->where('email', $input['email'])->first();
+            $call =  Calls::with('assigned_to')->withTrashed()->where('email', $input['email'])->first();
             return $this->sendError($validator->errors(), $call);
         } else {
             // Register the new user or whatever.

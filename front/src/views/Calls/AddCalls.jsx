@@ -172,7 +172,7 @@ const AddCalls = (props) => {
       const response = await axios.post(URL, data, {
         headers,
       });
-     
+
       if (response?.data?.success) {
         setLoading(false);
         setLoading2(false);
@@ -197,6 +197,39 @@ const AddCalls = (props) => {
         } else {
           setErr(err?.response?.data?.message);
         }
+      }
+
+      setLoading(false);
+    }
+  };
+
+  const TransferMySelf = async () => {
+    const URL = adminApi() + "notifications";
+
+    try {
+      const response = await axios.post(
+        URL,
+        {
+          type: 4,
+          content: "Client Recovering Request",
+          call_id: call?.id,
+          user_id: logindata.userId,
+          is_read: 0,
+        },
+        {
+          //user id is creator of notifications
+          headers,
+        }
+      );
+      //console.log(response);
+      if (response?.data?.success) {
+        window.location.href = "/";
+       // setLoading(false);
+     //   setValidationModal(false);
+      //  setNotiState(response?.data?.data);
+      }
+    } catch (err) {
+      if (!err?.response?.data?.success) {
       }
 
       setLoading(false);
@@ -1189,16 +1222,32 @@ const AddCalls = (props) => {
                       {call?.email}
                     </span>
                   </div>
-                  <div className="flex  items-center">
-                    Phone:
-                    <span className="text-xs text-success bg-success/20 border border-success/20 rounded-md px-1.5 py-0.5 ml-1">
-                      {call?.phone}
-                    </span>
-                  </div>
+
+                  {call.phone && (
+                    <div className="flex  items-center">
+                      Phone:
+                      <span className="text-xs text-success bg-success/20 border border-success/20 rounded-md px-1.5 py-0.5 ml-1">
+                        {call?.phone}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex  items-center">
                     Follow Up Date :
                     <span className="text-xs text-success bg-success/20 border border-success/20 rounded-md px-1.5 py-0.5 ml-1">
                       {call?.follow_up_date}
+                    </span>
+                  </div>
+                  <div className="flex  items-center">
+                    Assigned to :
+                    <span className="text-xs text-success bg-success/20 border border-success/20 rounded-md px-1.5 py-0.5 ml-1">
+                      {logindata?.userId == call?.assigned_to?.id ? (
+                        "My self"
+                      ) : (
+                        <>
+                          {call?.assigned_to?.first_name}{" "}
+                          {call?.assigned_to?.last_name}{" "}
+                        </>
+                      )}
                     </span>
                   </div>
                 </div>
@@ -1215,26 +1264,44 @@ const AddCalls = (props) => {
               onClick={() => {
                 setValidationModal(false);
               }}
-              className="btn btn-outline-secondary w-24 mr-1"
+              className="btn btn-outline-secondary w-24 mr-5"
             >
               Cancel
             </button>
-
             {show && (
-              <button
-                onClick={moveAdmin}
-                type="button"
-                className="btn btn-danger "
-              >
-                Transfer Customer To Admin
-                {loading && (
-                  <LoadingIcon
-                    icon="three-dots"
-                    color="white"
-                    className="w-4 h-4 ml-2"
-                  />
+              <>
+                {logindata?.userId == call?.assigned_to?.id ? (
+                  <button
+                    onClick={TransferMySelf}
+                    type="button"
+                    className="btn btn-pending  "
+                  >
+                    Transfer To Myself
+                    {loading && (
+                      <LoadingIcon
+                        icon="three-dots"
+                        color="white"
+                        className="w-4 h-4 ml-2"
+                      />
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    onClick={moveAdmin}
+                    type="button"
+                    className="btn btn-danger "
+                  >
+                    Transfer Customer To Admin
+                    {loading && (
+                      <LoadingIcon
+                        icon="three-dots"
+                        color="white"
+                        className="w-4 h-4 ml-2"
+                      />
+                    )}
+                  </button>
                 )}
-              </button>
+              </>
             )}
           </div>
         </ModalBody>

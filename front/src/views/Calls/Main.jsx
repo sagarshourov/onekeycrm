@@ -186,11 +186,19 @@ function tomorrowScheduleFilters(array, callSwitch, user_id) {
   }
 }
 
-function applyAllFilters(array, searchValue, sections, user_id, priority) {
+function applyAllFilters(
+  array,
+  searchValue,
+  sections,
+  user_id,
+  priority,
+  order
+) {
   //console.log("priority", priority);
   if (array.length == 0) return;
+  let filteredArray = [];
   if (user_id !== 0) {
-    return filter(array, (_items) => {
+    filteredArray = filter(array, (_items) => {
       if (
         _items.sections !== sectionFind(sections, _items.sections) &&
         _items.p_sort &&
@@ -210,7 +218,7 @@ function applyAllFilters(array, searchValue, sections, user_id, priority) {
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-          -1) ||
+            -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -222,7 +230,7 @@ function applyAllFilters(array, searchValue, sections, user_id, priority) {
       );
     });
   } else {
-    return filter(array, (_items) => {
+    filteredArray = filter(array, (_items) => {
       if (
         _items.sections !== sectionFind(sections, _items.sections) &&
         _items.p_sort &&
@@ -239,7 +247,7 @@ function applyAllFilters(array, searchValue, sections, user_id, priority) {
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-          -1) ||
+            -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -251,6 +259,12 @@ function applyAllFilters(array, searchValue, sections, user_id, priority) {
       );
     });
   }
+
+  if (order == "asc") {
+    return filteredArray.reverse();
+  }
+
+  return filteredArray;
 }
 
 function applySortFilters(array, searchValue, sec, user_id, priority) {
@@ -283,7 +297,7 @@ function applySortFilters(array, searchValue, sec, user_id, priority) {
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-          -1) ||
+            -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -315,7 +329,7 @@ function applySortFilters(array, searchValue, sec, user_id, priority) {
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-          -1) ||
+            -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -364,6 +378,7 @@ const AdminUsers = (props) => {
   const [row, setRow] = useState([]);
   const [rowId, setRowID] = useState(0);
   const [callSwitch, setCallSwitch] = useState(false);
+  const [order, setOrder] = useState("asc");
 
   const [showCallVew, setCallView] = useState(false);
 
@@ -607,6 +622,10 @@ const AdminUsers = (props) => {
     setEmployee(parseInt(val));
   };
 
+  <button className="btn btn-pending w-32 mr-2 mb-2">
+    <Lucide icon="Download" className="w-4 h-4 mr-2" /> Pending
+  </button>;
+
   //console.log("offset", offset);
   // console.log("userdata", usersData);
   return (
@@ -618,10 +637,10 @@ const AdminUsers = (props) => {
           <div className=" lg:basis-9/12 grid grid-cols-2 md:grid-cols-5 lg:grid-cols-8 gap-2 ">
             {allCheck.length == 0 && (
               <Link
-                className="btn btn-elevated-primary shadow-md mr-2 py-2"
+                className="btn btn-primary shadow-md mr-2 py-1"
                 to="/calls/add"
               >
-                Add New 
+                <Lucide icon="Plus" className="w-4 h-4 mr-2" /> Add New
               </Link>
             )}
 
@@ -642,10 +661,10 @@ const AdminUsers = (props) => {
 
             {allCheck.length == 1 && (
               <Link
-                className="btn btn-elevated-pending shadow-md mr-2 py-2"
+                className="btn btn-pending shadow-md mr-2 py-1"
                 to={"/calls/edit/" + allCheck[0]}
               >
-                Edit
+                <Lucide icon="Pencil" className="w-4 h-4 mr-2" /> Edit
               </Link>
             )}
 
@@ -653,9 +672,9 @@ const AdminUsers = (props) => {
               <>
                 <button
                   onClick={() => setDeleteConfirmationModal(true)}
-                  className="btn btn-elevated-danger"
+                  className="btn btn-danger"
                 >
-                  Delete
+                  <Lucide icon="Trash" className="w-4 h-4 mr-2" /> Delete
                 </button>
 
                 <>
@@ -684,7 +703,7 @@ const AdminUsers = (props) => {
                     onChange={(e) => bulkUpdate(e.target.name, e.target.value)}
                     className="form-select"
                   >
-                    <option value="0">Employees ..</option>
+                    <option value="0">Assign Employee</option>
                     {usersData.state === "hasValue" &&
                       usersData.contents.map((val, indx) => (
                         <option key={indx} value={val?.id}>
@@ -712,19 +731,18 @@ const AdminUsers = (props) => {
             ) : (
               logindata.role === 1 && (
                 <>
-
-                  <Link
-                    className="btn btn-elevated-success text-white shadow-md mr-2 py-2"
+                  {/* <Link
+                    className="btn btn-success text-white shadow-md mr-2 py-1"
                     to="/calls/import"
                   >
                     Import 
-                  </Link>
+                  </Link> */}
 
                   <button
                     onClick={exportExcel}
-                    className="btn btn-elevated-warning text-white shadow-md mr-2 py-2"
+                    className="btn btn-warning text-white shadow-md mr-2 py-1"
                   >
-                    Export
+                    <Lucide icon="Archive" className="w-4 h-4 mr-2" /> Export
                   </button>
                 </>
               )
@@ -732,21 +750,21 @@ const AdminUsers = (props) => {
 
             {logindata.role !== 3 && (
               <>
-
-                <select
-                  name="assigned_to"
-                  onChange={(e) => EmployeeFilter(e.target.value)}
-                  className="form-select"
-                >
-                  <option value="0">Employees ..</option>
-                  {usersData.state === "hasValue" &&
-                    usersData.contents.map((val, indx) => (
-                      <option key={indx} value={val?.id}>
-                        {val?.first_name} {val?.last_name}
-                      </option>
-                    ))}
-                </select>
-
+                {allCheck.length == 0 && (
+                  <select
+                    name="assigned_to"
+                    onChange={(e) => EmployeeFilter(e.target.value)}
+                    className="form-select"
+                  >
+                    <option value="0">Employees ..</option>
+                    {usersData.state === "hasValue" &&
+                      usersData.contents.map((val, indx) => (
+                        <option key={indx} value={val?.id}>
+                          {val?.first_name} {val?.last_name}
+                        </option>
+                      ))}
+                  </select>
+                )}
                 <div className="">
                   <div
                     onClick={CallSwitch}
@@ -764,6 +782,30 @@ const AdminUsers = (props) => {
                   </div>
                 </div>
               </>
+            )}
+            {(allCheck.length == 0 &&  logindata.role === 1) && (
+              <div>
+                {order == "desc" ? (
+                  <button
+                    onClick={() => setOrder("asc")}
+                    className="btn btn-outline-secondary "
+                  >
+                    {" "}
+                    <Lucide
+                      icon="ArrowUp"
+                      className="w-4 h-4 mr-2"
+                    /> Ascending{" "}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setOrder("desc")}
+                    className="btn btn-outline-secondary"
+                  >
+                    <Lucide icon="ArrowDown" className="w-4 h-4 mr-2" />
+                    Descending{" "}
+                  </button>
+                )}
+              </div>
             )}
           </div>
           {/* <div className="hidden md:block mx-auto text-slate-500">
@@ -830,7 +872,8 @@ const AdminUsers = (props) => {
                             search,
                             setting.sections,
                             callSwitch ? logindata.userId : employee,
-                            priority
+                            priority,
+                            order
                           )}
                           setUserId={setCallId}
                           setCallState={setCallState}
