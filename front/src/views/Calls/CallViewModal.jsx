@@ -12,6 +12,8 @@ import {
 import { getBaseApi } from "../../configuration";
 import { helper } from "@/utils/helper";
 import { Link } from "react-router-dom";
+import { loginState } from "../../state/login-atom";
+import { useRecoilValue } from "recoil";
 function extra_title(arr, group, index) {
   var value = "";
   if (arr.extra && arr.extra.length > 0) {
@@ -35,7 +37,7 @@ function extra_title(arr, group, index) {
 const CallViewModal = (props) => {
   const { showCallVew, setCallView, data, handelCallModel } = props;
   const [loading, setLoading] = useState(false);
-
+  const logindata = useRecoilValue(loginState);
   //console.log('single call',data);
 
   return (
@@ -50,7 +52,7 @@ const CallViewModal = (props) => {
       <ModalHeader>
         <h2 className="font-medium text-base mr-auto">Single Call View</h2>
 
-        <Link to={"/calls/edit/"+data.id}>Edit</Link>
+        {logindata.role !=3  && <Link to={"/calls/edit/"+data.id}>Edit</Link> }
       </ModalHeader>
       <ModalBody className="p-5">
         <div className="intro-y box p-5">

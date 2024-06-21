@@ -180,8 +180,8 @@ const AddCalls = (props) => {
         redirect
           ? navigate("../calls/all", { replace: true })
           : navigate("../calls/edit/" + response?.data?.message, {
-              replace: true,
-            });
+            replace: true,
+          });
       }
     } catch (err) {
       if (!err?.response?.data?.success) {
@@ -224,9 +224,9 @@ const AddCalls = (props) => {
       //console.log(response);
       if (response?.data?.success) {
         window.location.href = "/";
-       // setLoading(false);
-     //   setValidationModal(false);
-      //  setNotiState(response?.data?.data);
+        // setLoading(false);
+        //   setValidationModal(false);
+        //  setNotiState(response?.data?.data);
       }
     } catch (err) {
       if (!err?.response?.data?.success) {
@@ -1270,37 +1270,22 @@ const AddCalls = (props) => {
             </button>
             {show && (
               <>
-                {logindata?.userId == call?.assigned_to?.id ? (
-                  <button
-                    onClick={TransferMySelf}
-                    type="button"
-                    className="btn btn-pending  "
-                  >
-                    Transfer To Myself
-                    {loading && (
-                      <LoadingIcon
-                        icon="three-dots"
-                        color="white"
-                        className="w-4 h-4 ml-2"
-                      />
-                    )}
-                  </button>
-                ) : (
-                  <button
-                    onClick={moveAdmin}
-                    type="button"
-                    className="btn btn-danger "
-                  >
-                    Transfer Customer To Admin
-                    {loading && (
-                      <LoadingIcon
-                        icon="three-dots"
-                        color="white"
-                        className="w-4 h-4 ml-2"
-                      />
-                    )}
-                  </button>
-                )}
+
+                <button
+                  onClick={moveAdmin}
+                  type="button"
+                  className="btn btn-danger "
+                >
+                  Transfer Customer To Me
+                  {loading && (
+                    <LoadingIcon
+                      icon="three-dots"
+                      color="white"
+                      className="w-4 h-4 ml-2"
+                    />
+                  )}
+                </button>
+
               </>
             )}
           </div>
