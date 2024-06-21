@@ -301,7 +301,7 @@ const AdminUsers = (props) => {
 
       <div className="col-span-1 lg:order-1 order-2 lg:col-span-3">
         <div className="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-          <div className=" lg:basis-7/12 gap-2">
+          <div className=" lg:basis-7/12 gap-2  grid  grid-cols-1 lg:grid-cols-5">
             <Link
               className="btn btn-elevated-primary shadow-md mr-2 py-2"
               to="/calls/add"
@@ -315,7 +315,8 @@ const AdminUsers = (props) => {
             >
               Export Excel
             </button> */}
-
+        {logindata.role != 3 && 
+          <>
             {allCheck.length == 1 && (
               <Link
                 className="btn btn-elevated-pending shadow-md mr-2 py-2"
@@ -368,6 +369,9 @@ const AdminUsers = (props) => {
                 </select>
               </>
             )}
+
+            </>
+          }
           </div>
         
 
@@ -467,6 +471,7 @@ const AdminUsers = (props) => {
                         section={0}
                         setting={setting}
                         loadMore={handelLoad}
+                        role={logindata.role}
                       />
                     </AccordionPanel>
                   </AccordionItem>

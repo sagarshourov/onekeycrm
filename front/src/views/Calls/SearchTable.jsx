@@ -5,9 +5,9 @@ import { Tippy, Checkbox } from "@/base-components";
 //     return _items.id === id;
 //   });
 // }
-
+import CallViewModal from "./CallViewModal";
 import { helper } from "@/utils/helper";
-
+import { useState,useRef  } from "react";
 function extra_title(arr, group, index) {
   var value = "";
   if (arr.extra && arr.extra.length > 0) {
@@ -28,8 +28,23 @@ function extra_title(arr, group, index) {
   return value;
 }
 
-const UsersTable = (props) => {
-  const { users, rowCount, allCheck, setAllCheck } = props;
+const SearchTable = (props) => {
+  const {role, users, rowCount, allCheck, setAllCheck } = props;
+  const [showCallVew, setCallView] = useState(false);
+  const [singleCall, setSingleCall] = useState([]);
+
+  const handelCallModel = (show) => {
+    setCallView(show);
+  };
+
+  const handelGo = (call) => {
+    console.log('clooo0',call);
+    setCallView(true);
+    setSingleCall(call)
+   
+  };
+
+
 
   const handelChange = (e, id) => {
     e.preventDefault();
@@ -60,7 +75,7 @@ const UsersTable = (props) => {
     <div className="overflow-auto relative">
       <table className="table table-report -mt-2">
         <thead>
-          <tr>
+          <tr    >
             <th className="whitespace-nowrap">
               <div className=" mt-2">
                 <Checkbox
@@ -142,9 +157,10 @@ const UsersTable = (props) => {
               }
 
               return (
-                <tr key={key} className={"border-t pt-2" + dark}>
+                <tr key={key}  onClick={() => handelGo(user)}  className={"border-t pt-2 " + dark}>
+                  
                   <td>
-                    <div className="form-check mt-2">
+                  {role !=3 &&<div className="form-check mt-2">
                       <Checkbox
                         className="form-check-input "
                         key={key}
@@ -154,8 +170,9 @@ const UsersTable = (props) => {
                         handleClick={handelSingleCheck}
                         isChecked={allCheck.includes(user.id)}
                       />
-                    </div>
+                    </div>  }
                   </td>
+                
                   <td className="w-40">{key+1}</td>
                   <td>
                     {user.first_name} {user.last_name}
@@ -254,8 +271,14 @@ const UsersTable = (props) => {
             })}
         </tbody>
       </table>
+      <CallViewModal
+        showCallVew={showCallVew}
+        setCallView={setCallView}
+        handelCallModel={handelCallModel}
+        data={singleCall}
+      />
     </div>
   );
 };
 
-export default UsersTable;
+export default SearchTable;

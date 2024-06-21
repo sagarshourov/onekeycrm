@@ -218,7 +218,7 @@ function applyAllFilters(
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
+          -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -247,7 +247,7 @@ function applyAllFilters(
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
+          -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -297,7 +297,7 @@ function applySortFilters(array, searchValue, sec, user_id, priority) {
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
+          -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -329,7 +329,7 @@ function applySortFilters(array, searchValue, sec, user_id, priority) {
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
+          -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -765,26 +765,26 @@ const AdminUsers = (props) => {
                       ))}
                   </select>
                 )}
-                <div className="">
-                  <div
-                    onClick={CallSwitch}
-                    className="dark-mode-switcher cursor-pointer shadow-md  bottom-0 left-0 box border rounded-full w-36 h-10 flex items-center justify-center z-50 "
-                  >
-                    <div className="mr-4 text-slate-600 dark:text-slate-200">
-                      Switch Calls
-                    </div>
-                    <div
-                      className={classnames({
-                        "dark-mode-switcher__toggle border": true,
-                        "dark-mode-switcher__toggle--active": callSwitch,
-                      })}
-                    ></div>
+
+                <div
+                  onClick={CallSwitch}
+                  className="dark-mode-switcher col-span-2  cursor-pointer shadow-md  bottom-0 left-0 box border rounded-full w-36 h-10 flex items-center justify-center z-50 "
+                >
+                  <div className="mr-4 text-slate-600 dark:text-slate-200">
+                    Switch Calls
                   </div>
+                  <div
+                    className={classnames({
+                      "dark-mode-switcher__toggle border": true,
+                      "dark-mode-switcher__toggle--active": callSwitch,
+                    })}
+                  ></div>
                 </div>
+
               </>
             )}
-            {(allCheck.length == 0 &&  logindata.role === 1) && (
-              <div>
+            {(allCheck.length == 0 && logindata.role === 1) && (
+              <div className="mr-1">
                 {order == "desc" ? (
                   <button
                     onClick={() => setOrder("asc")}

@@ -151,7 +151,7 @@ class CallsController extends BaseController
 
 
 
-        if ($user->is_admin && $user->is_admin == 4) {
+        if ($user->is_admin && $user->is_admin == 4 ) {
             // return Calls::where(['assigned_to' => $user->id, $field => $value])->with($with)->orderBy('id', 'DESC')->offset($off)->limit($limit)->get();
             $emp = AssignEmployee::where('admin_id', $user->id)->pluck('user_id')->toArray();;
             $emp[] = $user->id;
@@ -172,23 +172,28 @@ class CallsController extends BaseController
                     ->get();
                 //  return Calls::WhereIn('assigned_to', $emp)->where([[$field, '=',  $null], ['email', 'like', '%' . $query . '%'], ['first_name', 'like', '%' . $query . '%']])->with($with)->get();
             }
-        } else if ($user->is_admin && $user->is_admin == 3) {
-            // return Calls::where(['assigned_to' => $user->id, $field => $value])->with($with)->orderBy('id', 'DESC')->offset($off)->limit($limit)->get();
+        } 
+        
+        // instruction 19/6/2024 jira 20 else if ($user->is_admin && $user->is_admin == 3) {
+        //     // return Calls::where(['assigned_to' => $user->id, $field => $value])->with($with)->orderBy('id', 'DESC')->offset($off)->limit($limit)->get();
 
 
-            if ($search == '0') {
+        //     if ($search == '0') {
 
-                // return $field.'='.$null;
-                //  return Calls::where([$field, '=',  $null], ['assigned_to', '=', $user->id])->get();
+        //         // return $field.'='.$null;
+        //         //  return Calls::where([$field, '=',  $null], ['assigned_to', '=', $user->id])->get();
 
-                return Calls::where([['assigned_to', '=', $user->id], [$field, '=',  $null]])->with($with)->orderBy('sort', $order)->offset($off)->limit($limit)->get();
-            } else if ($field == 'sections' && $search != '0') {
+        //         return Calls::where([['assigned_to', '=', $user->id], [$field, '=',  $null]])->with($with)->orderBy('sort', $order)->offset($off)->limit($limit)->get();
+        //     } else if ($field == 'sections' && $search != '0') {
 
-                return Calls::where('assigned_to', '=', $user->id)->OrWhere('email', 'like', '%' . $query . '%')->OrWhere('first_name', 'like', '%' . $query . '%')->OrWhere('last_name', 'like', '%' . $query . '%')->with($with)->get();
-            } else {
-                return Calls::where([['assigned_to', '=', $user->id], [$field, '=',  $null], ['email', 'like', '%' . $query . '%']])->OrWhere([['assigned_to', '=', $user->id], [$field, '=',  $null], ['first_name', 'like', '%' . $query . '%']])->with($with)->get();
-            }
-        } else if ($user_id != 0) {
+        //         return Calls::where('assigned_to', '=', $user->id)->OrWhere('email', 'like', '%' . $query . '%')->OrWhere('first_name', 'like', '%' . $query . '%')->OrWhere('last_name', 'like', '%' . $query . '%')->with($with)->get();
+        //     } else {
+        //         return Calls::where([['assigned_to', '=', $user->id], [$field, '=',  $null], ['email', 'like', '%' . $query . '%']])->OrWhere([['assigned_to', '=', $user->id], [$field, '=',  $null], ['first_name', 'like', '%' . $query . '%']])->with($with)->get();
+        //     }
+        // } 
+        
+        
+        else if ($user_id != 0) {
             if ($search == '0') {
                 return Calls::where([['assigned_to', '=', $user_id], [$field, '=',  $null]])->with($with)->orderBy('sort', $order)->offset($off)->limit($limit)->get();
             } else if ($field == 'sections' && $search != '0') {

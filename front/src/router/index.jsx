@@ -390,6 +390,12 @@ function Router() {
           element: <EditCalls />,
         },
         {
+          path: "/calls/search",
+          element: <SearchCalls />,
+        },
+
+
+        {
           path: "/results/:id",
           element: <Results />,
         },
