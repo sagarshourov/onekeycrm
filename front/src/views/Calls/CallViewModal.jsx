@@ -14,6 +14,7 @@ import { helper } from "@/utils/helper";
 import { Link } from "react-router-dom";
 import { loginState } from "../../state/login-atom";
 import { useRecoilValue } from "recoil";
+import { adminApi } from "../../configuration";
 function extra_title(arr, group, index) {
   var value = "";
   if (arr.extra && arr.extra.length > 0) {
@@ -40,6 +41,39 @@ const CallViewModal = (props) => {
   const logindata = useRecoilValue(loginState);
   //console.log('single call',data);
 
+  const transferCall = async (callId) => {
+    console.log("call", callId);
+
+    const URL = adminApi() + "notifications";
+
+    try {
+      const response = await axios.post(
+        URL,
+        {
+          type: 1,
+          content: "Client Recovering Request",
+          call_id: callId,
+          user_id: logindata.userId,
+          is_read: 0,
+        },
+        {
+          //user id is creator of notifications
+          headers,
+        }
+      );
+      //console.log(response);
+      if (response?.data?.success) {
+        setLoading(false);
+        window.location.reload();
+      }
+    } catch (err) {
+      if (!err?.response?.data?.success) {
+      }
+
+      setLoading(false);
+    }
+  };
+
   return (
     <Modal
       size="modal-xl"
@@ -52,7 +86,30 @@ const CallViewModal = (props) => {
       <ModalHeader>
         <h2 className="font-medium text-base mr-auto">Single Call View</h2>
 
-        {logindata.role !=3  && <Link to={"/calls/edit/"+data.id}>Edit</Link> }
+        {logindata.role == 3 && (
+          <>
+            {" "}
+            {data?.assigned_to?.id == logindata.userId ? (
+              <Link to={"/calls/edit/" + data.id}>Edit</Link>
+            ) : (
+              <button
+                onClick={() => transferCall(data.id)}
+                className="btn btn-primary"
+              >
+                Transfer Customer To Me{" "}
+                {loading && (
+                  <LoadingIcon
+                    icon="three-dots"
+                    color="white"
+                    className="w-4 h-4 ml-2"
+                  />
+                )}
+              </button>
+            )}
+          </>
+        )}
+
+        {logindata.role != 3 && <Link to={"/calls/edit/" + data.id}>Edit</Link>}
       </ModalHeader>
       <ModalBody className="p-5">
         <div className="intro-y box p-5">
@@ -170,7 +227,7 @@ const CallViewModal = (props) => {
             <div className="intro-x ">
               <label className="form-label text-base">First Call Note</label>
               <div className="form-control box p-3">
-              {data?.first_call_notes}
+                {data?.first_call_notes}
               </div>
             </div>
 
