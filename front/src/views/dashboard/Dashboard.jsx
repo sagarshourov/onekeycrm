@@ -77,7 +77,7 @@ function Main() {
   };
 
   const handelSelectTeam = (e) => {
-    console.log("sagar", e.target.value);
+   // console.log("sagar", e.target.value);
     setTeamFilter(e.target.value);
   };
 

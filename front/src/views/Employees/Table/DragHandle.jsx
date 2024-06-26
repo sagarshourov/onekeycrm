@@ -37,6 +37,6 @@ export const DragHandle = (props) => {
 
 <div className="test">
 
-  {console.log('sa')}
+
 
 </div>

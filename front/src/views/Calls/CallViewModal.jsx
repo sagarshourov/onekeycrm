@@ -35,14 +35,33 @@ function extra_title(arr, group, index) {
   return value;
 }
 
+
+function get_value(arr, group, key) {
+
+  console.log('d',arr);
+  var time = "";
+  if (arr.extra && arr.extra.length > 0) {
+    arr.extra.map((dat, index) => {
+  
+      if (dat.groups == group) {
+        time = dat.values &&  helper.findVaue(dat.values, key)
+        console.log('match', dat.values);
+        
+      }
+    });
+  }
+  //console.log(date);
+  return time;
+}
+
 const CallViewModal = (props) => {
   const { showCallVew, setCallView, data, handelCallModel } = props;
   const [loading, setLoading] = useState(false);
   const logindata = useRecoilValue(loginState);
-  //console.log('single call',data);
+ // console.log('single call',data);
 
   const transferCall = async (callId) => {
-    console.log("call", callId);
+ //   console.log("call", callId);
 
     const URL = adminApi() + "notifications";
 
@@ -275,7 +294,7 @@ const CallViewModal = (props) => {
               <label className="form-label text-base"> Next Step Note</label>
               <div className="form-control box p-3">
                 {" "}
-                {extra_title(data, "my_step", 1)}{" "}
+                {get_value(data, "my_step", 'next_step_notes')}{" "}
               </div>
             </div>
 

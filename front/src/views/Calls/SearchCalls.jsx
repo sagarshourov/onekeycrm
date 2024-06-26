@@ -162,7 +162,7 @@ const AdminUsers = (props) => {
   };
 
   const searchCall = () => {
-    console.log('serach click');
+    //console.log('serach click');
     // valueQuery(null);
     if (search == "") {
       searchQuery(0);
@@ -184,7 +184,7 @@ const AdminUsers = (props) => {
     limitQuery(20);
     inputRef.current.value = "";
 
-    console.log('reset click',inputRef);
+   // console.log('reset click',inputRef);
   };
 
   const handelSection = (e) => {

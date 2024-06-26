@@ -622,9 +622,9 @@ const AdminUsers = (props) => {
     setEmployee(parseInt(val));
   };
 
-  <button className="btn btn-pending w-32 mr-2 mb-2">
-    <Lucide icon="Download" className="w-4 h-4 mr-2" /> Pending
-  </button>;
+  // <button className="btn btn-pending w-32 mr-2 mb-2">
+  //   <Lucide icon="Download" className="w-4 h-4 mr-2" /> Pending
+  // </button>;
 
   //console.log("offset", offset);
   // console.log("userdata", usersData);

@@ -26,11 +26,11 @@ const headers = {
 import { filter } from "lodash";
 
 function applySortFilters(array, searchValue, user_id, callSwitch) {
-   console.log('sort',array);
+   //console.log('sort',array);
   if (callSwitch) {
     return filter(array, (_items) => {
       if (_items !== null) {
-        console.log('assign ',_items);
+       // console.log('assign ',_items);
         return _items?.ass_id == user_id;
       }
     });
@@ -48,7 +48,7 @@ function applySortFilters(array, searchValue, user_id, callSwitch) {
 
 function format_time(dat) {
   if (dat.cst) {
-    // console.log('cst',dat.cst);
+   //  console.log('cst',dat.cst);
     return dat.call_schedule_date + "T" + dat.cst + ":00";
   } else {
     return dat.call_schedule_date ? dat.call_schedule_date : "";
@@ -86,7 +86,7 @@ function event_format(data) {
 
   data.next &&
     data.next.map((dat, index) => {
-      //console.log("csd", dat.follow_up_date);
+      console.log("csd", dat.steps);
       obj.push({
         id: dat.id,
         ev_id: dat.id,
@@ -119,7 +119,7 @@ const Events = (props) => {
   const loginData = useRecoilValue(loginState);
 
   const [search, setSearch] = useState("");
-  console.log("filter data", eventDatas.contents);
+  //console.log("filter data", eventDatas.contents);
   const deleteEvent = async () => {
     const LOGIN_URL = adminApi() + "delete_event";
 

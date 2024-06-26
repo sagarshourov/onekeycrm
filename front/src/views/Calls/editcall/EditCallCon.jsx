@@ -537,7 +537,7 @@ const EditCallCon = (props) => {
   };
 
   const restCancel = () => {
-    console.log("called rest cancel");
+   // console.log("called rest cancel");
     setCancelReason(false);
 
     setCancelReasonId(0);
@@ -553,7 +553,7 @@ const EditCallCon = (props) => {
 
     callSwitch === false && restCancel();
 
-    console.log("call switch", callSwitch);
+   // console.log("call switch", callSwitch);
   };
 
   // console.log('calls', calls);
@@ -586,7 +586,7 @@ const EditCallCon = (props) => {
   };
 
   const setRedirect = (flag) => {
-    console.log("flag", flag);
+   // console.log("flag", flag);
 
     setRedirectFlag(flag);
   };

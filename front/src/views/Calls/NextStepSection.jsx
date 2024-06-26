@@ -9,7 +9,7 @@ const NextStepSection = (props) => {
     var time = "";
     if (arr.extra && arr.extra.length > 0) {
       arr.extra.map((dat, index) => {
-        console.log('sa', dat);
+       // console.log('sa', dat);
         if (dat.groups == group) {
           time = dat.values &&  helper.findVaue(dat.values, "next_step_time")
         }
