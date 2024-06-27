@@ -480,6 +480,10 @@ function Router() {
           element: <AddCalls />,
         },
         {
+          path: "/calls/search",
+          element: <SearchCalls />,
+        },
+        {
           path: "/calls/import",
           element: <ImportCalls />,
         },

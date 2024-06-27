@@ -26,11 +26,11 @@ const headers = {
 import { filter } from "lodash";
 
 function applySortFilters(array, searchValue, user_id, callSwitch) {
-   //console.log('sort',array);
+  //console.log('sort',array);
   if (callSwitch) {
     return filter(array, (_items) => {
       if (_items !== null) {
-       // console.log('assign ',_items);
+        // console.log('assign ',_items);
         return _items?.ass_id == user_id;
       }
     });
@@ -48,7 +48,7 @@ function applySortFilters(array, searchValue, user_id, callSwitch) {
 
 function format_time(dat) {
   if (dat.cst) {
-   //  console.log('cst',dat.cst);
+    //  console.log('cst',dat.cst);
     return dat.call_schedule_date + "T" + dat.cst + ":00";
   } else {
     return dat.call_schedule_date ? dat.call_schedule_date : "";
@@ -56,6 +56,18 @@ function format_time(dat) {
 }
 
 function event_format(data) {
+  // data.fud && // instructions on 25/5/23
+  //   data.fud.map((dat, index) => {
+  //     //console.log("csd", dat.follow_up_date);
+  //     obj.push({
+  //       id: dat.id,
+  //       ev_id: dat.id,
+  //       start: dat.follow_up_date,
+  //       description: "Follow Up Date",
+  //       title: dat?.first_name + " " + dat?.last_name,
+
+  //     });
+  //   });
   let obj = [];
 
   data.csd &&
@@ -71,26 +83,14 @@ function event_format(data) {
         ass_id: dat.assigned_to,
       });
     });
-  // data.fud && // instructions on 25/5/23
-  //   data.fud.map((dat, index) => {
-  //     //console.log("csd", dat.follow_up_date);
-  //     obj.push({
-  //       id: dat.id,
-  //       ev_id: dat.id,
-  //       start: dat.follow_up_date,
-  //       description: "Follow Up Date",
-  //       title: dat?.first_name + " " + dat?.last_name,
-
-  //     });
-  //   });
 
   data.next &&
     data.next.map((dat, index) => {
-      console.log("csd", dat.steps);
+      // console.log("csd", dat.steps);
       obj.push({
         id: dat.id,
         ev_id: dat.id,
-        start: dat?.steps?.next[0]?.value + "T" + dat?.steps?.next[2]?.value,
+        start: dat?.steps?.next[0]?.value + "T" + dat?.steps?.next[1]?.value,
         description: "Next Step",
         title: dat?.first_name + " " + dat?.last_name,
         color: "#40E0D0",
@@ -145,45 +145,45 @@ const Events = (props) => {
     }
   };
 
-  const handelSave = async () => {
-    if (select == "") {
-      alert("Select user !");
+  // const handelSave = async () => {
+  //   if (select == "") {
+  //     alert("Select user !");
 
-      return false;
-    }
+  //     return false;
+  //   }
 
-    if (notes == "") {
-      alert("Notes required !");
+  //   if (notes == "") {
+  //     alert("Notes required !");
 
-      return false;
-    }
+  //     return false;
+  //   }
 
-    setLoading(true);
-    setSuccess(false);
-    const LOGIN_URL = getAdmin() + "save_event";
+  //   setLoading(true);
+  //   setSuccess(false);
+  //   const LOGIN_URL = getAdmin() + "save_event";
 
-    try {
-      const response = await axios.post(
-        LOGIN_URL,
-        { user_id: select, date: date, notes: notes },
-        {
-          headers,
-        }
-      );
+  //   try {
+  //     const response = await axios.post(
+  //       LOGIN_URL,
+  //       { user_id: select, date: date, notes: notes },
+  //       {
+  //         headers,
+  //       }
+  //     );
 
-      if (response.data.success) {
-        setNotes("");
-        setSelect("");
-        setSuccess(true);
-        setLoading(false);
-        setEventState(response?.data?.data);
-      }
+  //     if (response.data.success) {
+  //       setNotes("");
+  //       setSelect("");
+  //       setSuccess(true);
+  //       setLoading(false);
+  //       setEventState(response?.data?.data);
+  //     }
 
-      //  (response.data);
-    } catch (err) {
-      setLoading(false);
-    }
-  };
+  //     //  (response.data);
+  //   } catch (err) {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handelSearch = (e) => {
     //console.log("search");
@@ -200,8 +200,6 @@ const Events = (props) => {
     loginData.userId,
     callSwitch
   );
-
-
 
   return (
     <>

@@ -378,7 +378,7 @@ const AdminUsers = (props) => {
   const [row, setRow] = useState([]);
   const [rowId, setRowID] = useState(0);
   const [callSwitch, setCallSwitch] = useState(false);
-  const [order, setOrder] = useState("asc");
+  const [order, setOrder] = useState("desc");
 
   const [showCallVew, setCallView] = useState(false);
 

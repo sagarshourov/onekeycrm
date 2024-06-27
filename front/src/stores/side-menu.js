@@ -423,6 +423,11 @@ let superVisorObj = {
           pathname: "/calls/add",
           title: "Add",
         },
+        {
+          icon: "",
+          pathname: "/calls/search",
+          title: "Search",
+        },
       ],
     },
     {
