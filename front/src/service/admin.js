@@ -4,7 +4,7 @@ import { adminApi, getBaseApi, handelError } from "../configuration";
 // const token = localStorage.getItem("token");
 
 // const headers = { Authorization: `Bearer ${token}` };
-export async function getAssignUEmployee(loginstate,id) {
+export async function getAssignUEmployee(loginstate, id) {
   const userApiUrl = adminApi() + "assign_employee/" + id;
   // ("userApiUrl", userApiUrl);
   let tokens = loginstate.token ? loginstate.token : "token";
@@ -14,6 +14,21 @@ export async function getAssignUEmployee(loginstate,id) {
     const response = await axios.get(userApiUrl, { headers });
     return response.data || [];
   } catch (error) {
+    throw new Error(`Error in 'axiosGetJsonData(${userApiUrl})': 'Err`);
+  }
+}
+
+export async function getCallsPaginationIndex(loginState, offset, order) {
+  let tokens = loginState.token ? loginState.token : "invalid";
+  let headers = { Authorization: `Bearer ` + tokens };
+
+  const userApiUrl = adminApi() + "calls_pagination/" + offset + "/" + order;
+
+  try {
+    const response = await axios.get(userApiUrl, { headers });
+    return response.data || [];
+  } catch (error) {
+    handelError(error);
     throw new Error(`Error in 'axiosGetJsonData(${userApiUrl})': 'Err`);
   }
 }
@@ -53,10 +68,6 @@ export async function getEmpFollowReport(
     throw new Error(`Error in 'axiosGetJsonData(${userApiUrl})': 'Err`);
   }
 }
-
-
-
-
 
 export async function getEmpFcReport(
   loginstate,

@@ -61,6 +61,8 @@ const UsersTable = (props) => {
     headers,
     section,
     setSection,
+    setPageOff,
+    pageOff,
   } = props;
 
   const [rowCount, setRowCount] = useState(10);
@@ -88,12 +90,10 @@ const UsersTable = (props) => {
 
     if (checked) {
       setAllCheck(
-        users.map((li,index) => {
-
-          if(index <= rowCount){
+        users.map((li, index) => {
+          if (index <= rowCount) {
             return li.id;
           }
-         
         })
       );
       setAcheck(true);
@@ -113,8 +113,13 @@ const UsersTable = (props) => {
   };
 
   const loadMore = () => {
-    let count = rowCount + 20;
-    setRowCount(count);
+    if (users.length < rowCount) {
+      setPageOff(pageOff + 100);
+      console.log("load new data from server", pageOff);
+    } else {
+      let count = rowCount + 20;
+      setRowCount(count);
+    }
   };
 
   const allOver = (e) => {
@@ -156,7 +161,7 @@ const UsersTable = (props) => {
         setCallState(response?.data?.data);
       }
     } catch (err) {
-     // console.log(err);
+      // console.log(err);
       setLoading(false);
     }
   };
@@ -166,8 +171,6 @@ const UsersTable = (props) => {
     // e.target.parentNode.style.borderBottom = "none";
     //console.log("drag leave", e);
   };
-
-  
 
   const feedbackCheck = (history) => {
     var is_admin = history.map((data) => {
@@ -233,7 +236,6 @@ const UsersTable = (props) => {
                   key={0}
                   type="checkbox"
                   name="allcheck"
-           
                   handleClick={handelAllCheck}
                   // isChecked={allCheck.length > 0 ? true : false}
                 />
@@ -365,7 +367,7 @@ const UsersTable = (props) => {
                       />
                     </div>
                   </td>
-                  <td className="w-40">{key+1}</td>
+                  <td className="w-40">{key + 1}</td>
                   <td>
                     {user.first_name} {user.last_name}
                   </td>
@@ -464,7 +466,6 @@ const UsersTable = (props) => {
                           </option>
                         ))}
                     </select> */}
-                    
 
                     {user?.statu?.title}
                   </td>
@@ -535,9 +536,22 @@ const UsersTable = (props) => {
         </tbody>
       </table>
 
-      <button className="btn btn-default m-5" onClick={loadMore}>
+      {/* <button className="btn btn-default m-5" onClick={loadMore}>
         Load more ...
-      </button>
+      </button> */}
+
+      <div className="intro-y  mt-5 col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+        <button
+          onClick={() => loadMore(rowCount - 100)}
+          className="btn"
+          disabled={rowCount < 100 ? true : false}
+        >
+          Prev
+        </button>
+        <button onClick={() => loadMore(rowCount + 100)} className="btn ml-5">
+          Next
+        </button>
+      </div>
 
       <Modal
         size="modal-lg"

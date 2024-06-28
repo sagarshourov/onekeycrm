@@ -50,6 +50,10 @@ Route::group(["prefix" => "admin", 'middleware' => 'auth:api', "name" => "admin"
     Route::get('userinfo/{id}', 'App\Http\Controllers\AuthController@userinfo');
     Route::resource('users', UserController::class);
     Route::resource('calls', CallsController::class);
+
+    Route::get('calls_pagination/{off}/{order}', 'App\Http\Controllers\CallsController@call_paginate');
+
+
     Route::put('call_single/{id}', 'App\Http\Controllers\CallsController@call_single');
     Route::post('call_export', 'App\Http\Controllers\CallsController@call_export');
     Route::resource('notifications', NotiController::class);

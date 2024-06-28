@@ -6,6 +6,7 @@ import {
   getAllReports,
   getAllNoti,
   getCallsPagination,
+  getCallsPaginationIndex,
   getAssignUEmployee,
 } from "../service/admin";
 import { loginState } from "../state/login-atom";
@@ -288,3 +289,34 @@ export const singleCallState = atom({
   key: "singleCallState",
   default: singleCallselect,
 });
+
+
+
+export const pageIndexOffset = atom({
+  key: "pageIndexOffset",
+  default: 100,
+});
+
+
+
+export const callSelectIndex = selector({
+  key: "callSelectIndex",
+  get: async ({ get }) => {
+    try {
+      const response = await getCallsPaginationIndex(
+        get(loginState),
+        get(pageIndexOffset),
+        "ASC"
+      );
+
+      //console.log('canN_res',response);
+
+      return response.data || [];
+    } catch (error) {
+      console.error(`paginationCallState -> callSelectIndex() ERROR: \n${error}`);
+      return [];
+    }
+  },
+});
+
+

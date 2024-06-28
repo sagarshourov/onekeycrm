@@ -60,7 +60,7 @@ class CallsController extends BaseController
      * @return \Illuminate\Http\Response
      */
 
-    private function get_calls()
+    private function get_calls($off = 200)
     {
 
         $user = Auth::user();
@@ -68,7 +68,7 @@ class CallsController extends BaseController
         //   return   $user;
 
         if ($user->is_admin == 3) {
-            return Calls::where('assigned_to', $user->id)->WhereIn('results', [1, 2, 3, 6])->with(['extra.values',  'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->get();
+            return Calls::where('assigned_to', $user->id)->WhereIn('results', [1, 2, 3, 6])->with(['extra.values',  'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->offset($off)->limit(100)->get();
         } else if ($user->is_admin == 4) {
 
             $emp = AssignEmployee::where('admin_id', $user->id)->pluck('user_id')->toArray();;
@@ -77,16 +77,26 @@ class CallsController extends BaseController
             return  Calls::WhereIn('assigned_to', $emp)
                 ->where(function ($q) {
                     $q->WhereIn('results', [1, 2, 3, 6]);
-                })->with(['extra.values',  'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->get();
+                })->with(['extra.values',  'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->offset($off)->limit(100)->get();
 
 
             //  return Calls::WhereIn('assigned_to', $emp)->with(['extra.values',  'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user'])->orderBy('sort', 'ASC')->get();
 
             // return $emp;
         } else {
-            return Calls::WhereIn('results', [2, 3, 6])->with(['extra.values', 'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for',  'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->get();
+            return Calls::WhereIn('results', [2, 3, 6])->with(['extra.values', 'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for',  'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->offset($off)->limit(100)->get();
         }
     }
+
+
+    public function call_paginate($off, $order)
+    {
+
+        return $this->sendResponse($this->get_calls($off), 'Calls Retrieve successfully.');
+    }
+
+
+
     private function get_Cancel_calls()
     {
 
@@ -151,7 +161,7 @@ class CallsController extends BaseController
 
 
 
-        if ($user->is_admin && $user->is_admin == 4 ) {
+        if ($user->is_admin && $user->is_admin == 4) {
             // return Calls::where(['assigned_to' => $user->id, $field => $value])->with($with)->orderBy('id', 'DESC')->offset($off)->limit($limit)->get();
             $emp = AssignEmployee::where('admin_id', $user->id)->pluck('user_id')->toArray();;
             $emp[] = $user->id;
@@ -172,8 +182,8 @@ class CallsController extends BaseController
                     ->get();
                 //  return Calls::WhereIn('assigned_to', $emp)->where([[$field, '=',  $null], ['email', 'like', '%' . $query . '%'], ['first_name', 'like', '%' . $query . '%']])->with($with)->get();
             }
-        } 
-        
+        }
+
         // instruction 19/6/2024 jira 20 else if ($user->is_admin && $user->is_admin == 3) {
         //     // return Calls::where(['assigned_to' => $user->id, $field => $value])->with($with)->orderBy('id', 'DESC')->offset($off)->limit($limit)->get();
 
@@ -191,8 +201,8 @@ class CallsController extends BaseController
         //         return Calls::where([['assigned_to', '=', $user->id], [$field, '=',  $null], ['email', 'like', '%' . $query . '%']])->OrWhere([['assigned_to', '=', $user->id], [$field, '=',  $null], ['first_name', 'like', '%' . $query . '%']])->with($with)->get();
         //     }
         // } 
-        
-        
+
+
         else if ($user_id != 0) {
             if ($search == '0') {
                 return Calls::where([['assigned_to', '=', $user_id], [$field, '=',  $null]])->with($with)->orderBy('sort', $order)->offset($off)->limit($limit)->get();
@@ -551,7 +561,7 @@ class CallsController extends BaseController
             // unset($groups['created_at']);
             foreach ($groups as $field => $val) {
 
-                if ($field != 'created_at' && $field != 'user_id' ) {
+                if ($field != 'created_at' && $field != 'user_id') {
                     ExtraValues::create([
                         'field' => $field,
                         'value' => $val,
