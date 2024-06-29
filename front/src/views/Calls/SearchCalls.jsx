@@ -455,7 +455,7 @@ const AdminUsers = (props) => {
                       <SearchTable
                         rowCount={rowCount}
                         setDeleteConfirmationModal={setDeleteConfirmationModal}
-                        users={callData.contents}
+                        calls={callData.contents}
                         setUserId={setCallId}
                         setCallState={setCallState}
                         allCheck={allCheck}

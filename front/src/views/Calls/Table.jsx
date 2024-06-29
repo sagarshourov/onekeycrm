@@ -45,9 +45,9 @@ function extra_title(arr, group, index) {
 
   return value;
 }
-const UsersTable = (props) => {
+const CallsTable = (props) => {
   const {
-    users,
+    calls,
     setHistory,
     setCallState,
     allCheck,
@@ -113,7 +113,7 @@ const UsersTable = (props) => {
   };
 
   const loadMore = () => {
-    if (users.length < rowCount) {
+    if (calls.length < rowCount) {
       setPageOff(pageOff + 100);
       console.log("load new data from server", pageOff);
     } else {
@@ -286,8 +286,8 @@ const UsersTable = (props) => {
           </tr>
         </thead>
         <tbody>
-          {users &&
-            users.slice(0, rowCount).map((user, key) => {
+          {calls &&
+            calls.slice(0, rowCount).map((user, key) => {
               let dark = " bg-white ";
 
               var is_admin = 0;
@@ -602,4 +602,4 @@ const UsersTable = (props) => {
   );
 };
 
-export default UsersTable;
+export default CallsTable;
