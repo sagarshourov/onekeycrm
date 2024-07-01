@@ -60,39 +60,57 @@ class CallsController extends BaseController
      * @return \Illuminate\Http\Response
      */
 
-    private function get_calls($off = 200)
+    // private function get_calls($currentPage = 1, $perPage = 50000000)
+    // {
+
+    //     $user = Auth::user();
+
+    //     //   return   $user;
+
+    //     if ($user->is_admin == 3) {
+    //         return Calls::where('assigned_to', $user->id)->WhereIn('results', [1, 2, 3, 6])->with(['extra.values',  'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->skip(($currentPage-1) * $perPage)->take($perPage)->get();
+    //     } else if ($user->is_admin == 4) {
+
+    //         $emp = AssignEmployee::where('admin_id', $user->id)->pluck('user_id')->toArray();;
+    //         $emp[] = $user->id;
+
+    //         return  Calls::WhereIn('assigned_to', $emp)
+    //             ->where(function ($q) {
+    //                 $q->WhereIn('results', [1, 2, 3, 6]);
+    //             })->with(['extra.values',  'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->skip(($currentPage-1) * $perPage)->take($perPage)->get();
+
+
+    //         //  return Calls::WhereIn('assigned_to', $emp)->with(['extra.values',  'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user'])->orderBy('sort', 'ASC')->get();
+
+    //         // return $emp;
+    //     } else {
+    //         return Calls::WhereIn('results', [2, 3, 6])->with(['extra.values', 'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for',  'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->skip(($currentPage-1) * $perPage)->take($perPage)->get();
+    //     }
+    // }
+
+ private function get_calls($currentPage = 1, $perPage = 50000000)
     {
-
         $user = Auth::user();
-
         //   return   $user;
-
-        if ($user->is_admin == 3) {
-            return Calls::where('assigned_to', $user->id)->WhereIn('results', [1, 2, 3, 6])->with(['extra.values',  'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->offset($off)->limit(100)->get();
-        } else if ($user->is_admin == 4) {
-
+        if ($user->is_admin == 3) {    // employee
+            return Calls::where('assigned_to', $user->id)->WhereIn('results', [1, 2, 3, 6])->with(['extra.values',  'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->get();
+        } else if ($user->is_admin == 4) { // supervisor 
             $emp = AssignEmployee::where('admin_id', $user->id)->pluck('user_id')->toArray();;
             $emp[] = $user->id;
-
             return  Calls::WhereIn('assigned_to', $emp)
                 ->where(function ($q) {
                     $q->WhereIn('results', [1, 2, 3, 6]);
-                })->with(['extra.values',  'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->offset($off)->limit(100)->get();
-
-
+                })->with(['extra.values',  'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->get();
             //  return Calls::WhereIn('assigned_to', $emp)->with(['extra.values',  'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user'])->orderBy('sort', 'ASC')->get();
-
             // return $emp;
-        } else {
-            return Calls::WhereIn('results', [2, 3, 6])->with(['extra.values', 'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for',  'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->offset($off)->limit(100)->get();
+        } else { // admin and super admin
+            return Calls::WhereIn('results', [2, 3, 6])->with(['extra.values', 'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for',  'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->get();
         }
     }
-
-
-    public function call_paginate($off, $order)
+    public function call_paginate($off, $order, $limit)
     {
 
-        return $this->sendResponse($this->get_calls($off), 'Calls Retrieve successfully.');
+        return $this->sendResponse($this->get_calls($off, $limit), 'Calls Retrieve successfully.');
     }
 
 

@@ -292,9 +292,13 @@ export const singleCallState = atom({
 
 
 
-export const pageIndexOffset = atom({
-  key: "pageIndexOffset",
-  default: 100,
+export const currentPageIndex = atom({
+  key: "currentPageIndex",
+  default: 1,
+});
+export const perPageIndex = atom({
+  key: "perPageIndex",
+  default: 1200,
 });
 
 
@@ -305,8 +309,9 @@ export const callSelectIndex = selector({
     try {
       const response = await getCallsPaginationIndex(
         get(loginState),
-        get(pageIndexOffset),
-        "ASC"
+        get(currentPageIndex),
+        "ASC",
+        get(perPageIndex)
       );
 
       //console.log('canN_res',response);

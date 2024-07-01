@@ -18,11 +18,11 @@ export async function getAssignUEmployee(loginstate, id) {
   }
 }
 
-export async function getCallsPaginationIndex(loginState, offset, order) {
+export async function getCallsPaginationIndex(loginState, currentPage, order , limit) {
   let tokens = loginState.token ? loginState.token : "invalid";
   let headers = { Authorization: `Bearer ` + tokens };
 
-  const userApiUrl = adminApi() + "calls_pagination/" + offset + "/" + order;
+  const userApiUrl = adminApi() + "calls_pagination/" + currentPage + "/" + order+'/'+limit;
 
   try {
     const response = await axios.get(userApiUrl, { headers });

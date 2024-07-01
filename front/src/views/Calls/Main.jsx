@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 
 import { useRecoilStateLoadable, useRecoilValue } from "recoil";
-import { callListState , pageIndexOffset , callSelectIndex} from "../../state/admin-atom";
+import { callListState , perPageIndex , currentPageIndex , callSelectIndex} from "../../state/admin-atom";
 import { allUserListState } from "../../state/admin-atom";
 
 import { loginState } from "../../state/login-atom";
@@ -356,14 +356,18 @@ const AdminUsers = (props) => {
   let { id } = useParams();
   const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
 
- // const [callData, setCallState] = useRecoilStateLoadable(callListState);
+  const [callData, setCallState] = useRecoilStateLoadable(callListState);
   const [usersData, setUserState] = useRecoilStateLoadable(allUserListState);
 
-  const [callData, setCallState] = useRecoilStateLoadable(callSelectIndex);
+ // const [callData, setCallState] = useRecoilStateLoadable(callSelectIndex);
   console.log('callData',callData);
-  const [pageOff, setPageOff] = useRecoilStateLoadable(pageIndexOffset);
-  console.log('pageOff',pageOff);
-  const [rowCount, setRowCount] = useState(100);
+  const [currentPage, setCurrentPage] = useRecoilStateLoadable(currentPageIndex);
+
+  const [perPage, setPerPage] = useRecoilStateLoadable(perPageIndex);
+  
+
+  const [rowCount, setRowCount] = useState(30);
+
   const [search, setSearch] = useState("");
   const [aheck, setAcheck] = useState(false);
   const [call_id, setCallId] = useState(0);
@@ -872,7 +876,7 @@ const AdminUsers = (props) => {
                           setDeleteConfirmationModal={
                             setDeleteConfirmationModal
                           }
-                          users={applyAllFilters(
+                          calls={applyAllFilters(
                             callData.contents,
                             search,
                             setting.sections,
@@ -897,8 +901,9 @@ const AdminUsers = (props) => {
                           setting={setting}
                           setLoading={setLoading}
                           headers={headers}
-                          setPageOff={setPageOff}
-                          pageOff={parseInt(pageOff.contents)}
+                          setCurrentPage={setCurrentPage}
+                          currentPage={parseInt(currentPage.contents)}
+                          perPage={perPage.contents}
                         />
                       </AccordionPanel>
                     </AccordionItem>
@@ -966,6 +971,9 @@ const AdminUsers = (props) => {
                                 setting={setting}
                                 setLoading={setLoading}
                                 headers={headers}
+                                setCurrentPage={setCurrentPage}
+                                currentPage={parseInt(currentPage.contents)}
+                                perPage={perPage.contents}
                               />
                             </AccordionPanel>
                           </AccordionItem>

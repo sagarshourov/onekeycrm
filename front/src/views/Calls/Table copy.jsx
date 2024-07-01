@@ -1,60 +1,70 @@
-import { Checkbox, Tippy } from "@/base-components";
+import {
+  Checkbox,
+  Tippy,
+  Modal,
+  ModalHeader,
+  LoadingIcon,
+  ModalBody,
+  ModalFooter,
+} from "@/base-components";
 
-import axios from "axios";
 import { helper } from "@/utils/helper";
+import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { adminApi } from "../../configuration";
 import CopyEle from "./CopyEle";
-import { filter } from "lodash";
-import { adminApi, getBaseApi } from "../../configuration";
+import { pageLimit } from "../../state/admin-atom";
 const fText = (text) => {
   return text ? text.substr(0, 10) + "..." : "";
-};
-
-const get_section = (array, val) => {
-  if (val) {
-    var dat = filter(array, (_items) => {
-      return _items.id === val;
-    });
-    return dat[0].title;
-  }
-  return "";
 };
 
 const remove_style_tr = () => {
   var table = document.querySelectorAll("tr");
 
-  table.forEach(ele => {
-
+  table.forEach((ele) => {
     ele.style.borderTop = "none";
     // check for the particulr class
-   // console.log(ele);
-  
   });
-
-  
 };
 
-const UsersTable = (props) => {
+function extra_title(arr, group, index) {
+  var value = "";
+  if (arr.extra && arr.extra.length > 0) {
+    arr.extra.map((dat) => {
+      //   console.log("value dat", dat);
+      if (dat.groups == group && dat.values[index]?.value) {
+        value = dat.values[index]?.value;
+      }
+    });
+  }
+
+  if (index === 0 && value !== "") {
+    return helper.formatDate(value, "MMM D, YYYY");
+  }
+
+  // console.log("value", value);
+
+  return value;
+}
+const CallsTable = (props) => {
   const {
-    users,
+    calls,
     setHistory,
     setCallState,
-    setUserId,
-    setDeleteConfirmationModal,
     allCheck,
     setAllCheck,
     updateFunc,
-    aheck,
     setAcheck,
     theme,
     dragStart,
-    dragover,
-    tableDragOver,
-    section,
     setting,
     setLoading,
     headers,
+    section,
+    setSection,
+    setCurrentPage,
+    currentPage,
+    perPage,
   } = props;
 
   const [rowCount, setRowCount] = useState(10);
@@ -62,7 +72,11 @@ const UsersTable = (props) => {
   const [startRow, setStartRow] = useState([]);
 
   const [targetRow, setTargetRow] = useState([]);
+  const [infoModal, setInfoModal] = useState(false);
+  const [innerLoading, setInnerLoading] = useState(false);
+  const [feedback, setFeedback] = useState("");
 
+  const [callId, setCallId] = useState(0);
   const handelChange = (e, id, type) => {
     e.preventDefault();
 
@@ -77,7 +91,13 @@ const UsersTable = (props) => {
     const { checked } = e.target;
 
     if (checked) {
-      setAllCheck(users.map((li) => li.id));
+      setAllCheck(
+        users.map((li, index) => {
+          if (index <= rowCount) {
+            return li.id;
+          }
+        })
+      );
       setAcheck(true);
     } else {
       setAllCheck([]);
@@ -94,36 +114,34 @@ const UsersTable = (props) => {
     }
   };
 
-  const handleCheck = (e) => {
-    const { id, checked, name } = e.target;
-
-    updateFunc(id, name, checked);
-
-   // console.log(checked);
-  };
   const loadMore = () => {
     let count = rowCount + 20;
     setRowCount(count);
   };
 
   const allOver = (e) => {
-    //  console.log(e.target.parentNode.id);
-    setTargetRow(e.target.parentNode);
-
+    // console.log('target',e.target.parentNode.id);
     e.target.parentNode.style.borderTop = "14px  solid green";
+    // let children = Array.from(e.target.parentNode.parentNode.children);
+    // if (children.indexOf(e.target.parentNode) > children.indexOf(targetRow)) {
+    //   // e.target.parentNode.style.borderTop = "none";
+    //   e.target.parentNode.style.borderBottom = "14px  solid green";
+    // } else {
+    //   e.target.parentNode.style.borderTop = "14px  solid green";
+    //   //  e.target.parentNode.style.borderBottom = "none";
+    // }
+
+    setTargetRow(e.target.parentNode);
   };
 
-  const DragEnd = async (e) => {
+  const DragEnd = async () => {
     targetRow.borderTop = "none";
-
-    // console.log("DragEnd", e);
-
-    // console.log("target end", targetRow.id);
-    // console.log("start row", startRow.target.id);
 
     remove_style_tr();
     const URL = adminApi() + "calls_sort";
     setLoading(true);
+
+    // instructions on 26.10.2023 // change sort by Priority
 
     try {
       const response = await axios.post(
@@ -136,17 +154,70 @@ const UsersTable = (props) => {
 
       if (response?.data?.success) {
         setLoading(false);
+
         setCallState(response?.data?.data);
       }
     } catch (err) {
-      //console.log(err);
+      // console.log(err);
       setLoading(false);
     }
   };
 
   const DragLeave = (e) => {
     e.target.parentNode.style.borderTop = "none";
+    // e.target.parentNode.style.borderBottom = "none";
     //console.log("drag leave", e);
+  };
+
+  const feedbackCheck = (history) => {
+    var is_admin = history.map((data) => {
+      if (data.field === "feedbacks") {
+        return data.user.is_admin;
+      }
+    });
+    if (is_admin.length > 0) return is_admin[0];
+    return 0;
+  };
+
+  const markRead = async () => {
+    const URL = adminApi() + "update_feedback";
+    setLoading(true);
+    setInnerLoading(true);
+    try {
+      const response = await axios.post(
+        URL,
+        { id: callId },
+        {
+          headers,
+        }
+      );
+
+      if (response?.data?.success) {
+        setLoading(false);
+        setInnerLoading(false);
+        setCallState(response?.data?.data);
+
+        setInfoModal(false);
+      }
+    } catch (err) {
+      //  console.log(err);
+      setLoading(false);
+
+      setInnerLoading(false);
+    }
+  };
+  const get_color = (sort) => {
+    // colors of sort
+
+    if (sort.id === 4) {
+      return "text-danger";
+    } else if (sort.id === 3) {
+      return "text-warning";
+    } else if (sort.id === 2) {
+      return "text-fuchsia-400";
+    } else {
+      return "text-primary";
+    }
   };
 
   return (
@@ -162,7 +233,6 @@ const UsersTable = (props) => {
                   key={0}
                   type="checkbox"
                   name="allcheck"
-                  id={0}
                   handleClick={handelAllCheck}
                   // isChecked={allCheck.length > 0 ? true : false}
                 />
@@ -171,13 +241,13 @@ const UsersTable = (props) => {
 
             <th className="whitespace-nowrap">No</th>
             <th className="whitespace-nowrap">Client</th>
-
+            <th className="whitespace-nowrap">E-mail</th>
             {/* <th className="text-center whitespace-nowrap">Phone</th> */}
 
-            <th className="text-center whitespace-nowrap">Assigned To</th>
+            <th className="text-center whitespace-nowrap">Priority</th>
             <th className="text-center whitespace-nowrap">WhatsApp</th>
             <th className="text-center whitespace-nowrap">Age</th>
-            <th className="text-center whitespace-nowrap">Case Type</th>
+
             {/* <th className="text-center whitespace-nowrap">GPA</th> */}
             {/* <th className="text-center whitespace-nowrap">Priority</th> */}
             {/* <th className="text-center whitespace-nowrap">Referred by</th>
@@ -185,19 +255,23 @@ const UsersTable = (props) => {
             <th className="text-center whitespace-nowrap">
               Call Schedule Date
             </th>
-            <th className="text-center whitespace-nowrap">Next steps</th>
-            <th className="text-center whitespace-nowrap">Package</th>
-            <th className="text-center whitespace-nowrap">Status</th>
+            <th className="text-center whitespace-nowrap">Case Type</th>
 
-            <th className="text-center whitespace-nowrap">First Call Notes</th>
-            <th className="text-center whitespace-nowrap">
-              Follow up date set
-            </th>
-            <th className="text-center whitespace-nowrap">
-              Follow up call notes
-            </th>
+            <th className="text-center whitespace-nowrap"> First Call Date</th>
+            <th className="text-center whitespace-nowrap">First Call Note</th>
+            <th className="text-center whitespace-nowrap">Package</th>
 
             <th className="text-center whitespace-nowrap">Agreement Sent</th>
+
+            <th className="text-center whitespace-nowrap">Agreement Signed</th>
+
+            <th className="text-center whitespace-nowrap">Status</th>
+            <th className="text-center whitespace-nowrap"> Next Step Date</th>
+
+            <th className="text-center whitespace-nowrap"> Next Step Note</th>
+
+            <th className="text-center whitespace-nowrap">Follow up date</th>
+            <th className="text-center whitespace-nowrap">Follow up note</th>
 
             {/* <th className="text-center whitespace-nowrap">
               {" "}
@@ -205,29 +279,38 @@ const UsersTable = (props) => {
             </th> */}
 
             <th className="text-center whitespace-nowrap"> Feedback</th>
+            <th className="text-center whitespace-nowrap">Assigned To</th>
           </tr>
         </thead>
         <tbody>
-          {users &&
-            users.slice(0, rowCount).map((user, key) => {
-              let count = key + 1;
+          {calls &&
+            calls.slice(0, rowCount).map((user, key) => {
               let dark = " bg-white ";
 
               var is_admin = 0;
 
-              user.history &&
-                user.history.map((data, index) => {
-                  if (data.field == "feedbacks") {
-                    is_admin = data.user.is_admin;
+              if (user.history) {
+                var admin = feedbackCheck(user.history);
 
-                    //console.log(user.id + "=is_admin", is_admin);
-                  }
-                });
+                is_admin = admin ? admin : 0;
+              }
 
-              if (is_admin === 1) {
+              if (is_admin === 1 && user.feedbacks && user.feedbacks !== "") {
                 dark = " alert-warning-soft ";
-              } else if (is_admin == 2) {
+              } else if (
+                is_admin === 2 &&
+                user.feedbacks &&
+                user?.feedbacks !== ""
+              ) {
                 dark = " alert-success-soft ";
+              } else if (
+                is_admin === 4 &&
+                user.feedbacks &&
+                user?.feedbacks !== ""
+              ) {
+                dark = " bg-amber-200 ";
+              } else if (allCheck.includes(user.id)) {
+                dark = " alert-secondary ";
               }
 
               // var team_id = user?.user?.team;
@@ -257,8 +340,11 @@ const UsersTable = (props) => {
                   className={"border-t pt-2" + dark}
                   draggable={true}
                   onDragStart={(e) => {
-                    dragStart(e, user.id);
                     setStartRow(e);
+                    // console.log('dragstart',e);
+                    dragStart(e, user.id);
+
+                    setSection(section);
                   }}
                   id={user.sort}
                   onDragOver={(e) => allOver(e)}
@@ -278,34 +364,34 @@ const UsersTable = (props) => {
                       />
                     </div>
                   </td>
-                  <td className="w-40">{key+1}</td>
+                  <td className="w-40">{ key + 1}</td>
                   <td>
-                    <Link
-                      to="#"
-                      draggable={false}
-                      className="font-medium whitespace-nowrap"
+                    {user.first_name} {user.last_name}
+                  </td>
+                  <td>
+                    <div
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      className="text-slate-500 text-xs whitespace-nowrap mt-0.5"
                     >
-                      {user.first_name} {user.last_name} 
-                    </Link>
-                    <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                       <CopyEle email={user.email} />
                     </div>
                   </td>
 
                   <td>
-                    {user?.assigned_to?.first_name}{" "}
-                    {user?.assigned_to?.last_name}
+                    {user?.priority}
+                    {user?.p_sort && (
+                      <small className={get_color(user?.p_sort)}>
+                        {" "}
+                        {user?.p_sort?.title}{" "}
+                      </small>
+                    )}
                   </td>
-
                   <td>{user?.whatsapp}</td>
 
                   <td className="text-center">{user?.age}</td>
-
-                  <td className="text-center">
-                    {user?.case_type == 1 && "F-1"}{" "}
-                    {user?.case_type == 2 && "F-1/F2"}
-                  </td>
-
                   <td className="text-center">
                     {user?.call_schedule_date &&
                       helper.formatDate(
@@ -313,9 +399,32 @@ const UsersTable = (props) => {
                         "MMM D, YYYY"
                       )}{" "}
                   </td>
-                  <td className="text-center">{user?.next_step}</td>
+
+                  <td className="text-center">
+                    {user?.case_type == 1 && "F-1"}{" "}
+                    {user?.case_type == 2 && "F-1/F2"}
+                  </td>
+
+                  <td className="text-center">
+                    {user?.first_contact &&
+                      helper.formatDate(user?.first_contact, "MMM D, YYYY")}
+                  </td>
+                  <td className="text-center">
+                    <div className="text-center">
+                      <Tippy
+                        tag="a"
+                        href="#"
+                        className="tooltip"
+                        content={user?.first_call_notes}
+                      >
+                        {fText(user?.first_call_notes)}
+                      </Tippy>
+                    </div>
+                  </td>
+
                   <td>
-                    <select
+                    {user?.package?.title}
+                    {/* <select
                       onChange={(e) => handelChange(e, user.id, "n")}
                       name="package"
                       className="form-select form-select-sm mt-2 w-20"
@@ -329,10 +438,17 @@ const UsersTable = (props) => {
                             {val?.title}
                           </option>
                         ))}
-                    </select>
+                    </select> */}
                   </td>
+
+                  <td className="text-center">
+                    {user.ag === 0 ? "No" : "Yes"}
+                  </td>
+
+                  <td> {user.agreed_to_signed === 0 ? "No" : "Yes"}</td>
+
                   <td>
-                    <select
+                    {/* <select
                       onChange={(e) => handelChange(e, user.id, "n")}
                       name="status"
                       className="form-select form-select-sm mt-2 w-20"
@@ -346,25 +462,24 @@ const UsersTable = (props) => {
                             {val?.title}
                           </option>
                         ))}
-                    </select>
+                    </select> */}
+
+                    {user?.statu?.title}
                   </td>
-                  <td
-                    onClick={() =>
-                      setHistory("last_status_notes", user.history, user.id)
-                    }
-                    className="text-center"
-                  >
+                  <td>{extra_title(user, "my_step", 0)}</td>
+                  <td>
                     <div className="text-center">
                       <Tippy
                         tag="a"
                         href="#"
                         className="tooltip"
-                        content={user?.last_status_notes}
+                        content={extra_title(user, "my_step", 1)}
                       >
-                        {fText(user?.last_status_notes)}
+                        {fText(extra_title(user, "my_step", 1))}
                       </Tippy>
                     </div>
                   </td>
+
                   <td className="text-center">
                     {user?.follow_up_date &&
                       helper.formatDate(user?.follow_up_date, "MMM D, YYYY")}
@@ -389,25 +504,28 @@ const UsersTable = (props) => {
                   </td>
 
                   <td className="text-center">
-                    {user.ag === 0 ? "No" : "Yes"}
-                  </td>
-
-                  <td
-                    className="text-center"
-                    onClick={() =>
-                      setHistory("feedbacks", user.history, user.id)
-                    }
-                  >
                     <div className="text-center">
+                      {" "}
                       <Tippy
                         tag="a"
                         href="#"
-                        className="tooltip"
+                        className="tooltip btn btn-secondary"
                         content={user?.feedbacks}
+                        //onClick={(e) => { setInfoModal(true); setFeedback(user?.feedbacks); }
+
+                        onClick={() => {
+                          setInfoModal(true);
+                          setFeedback(user?.feedbacks);
+                          setCallId(user?.id);
+                        }}
                       >
-                        {fText(user?.feedbacks)}
+                        View
                       </Tippy>
                     </div>
+                  </td>
+                  <td>
+                    {user?.assigned_to?.first_name}{" "}
+                    {user?.assigned_to?.last_name}
                   </td>
                 </tr>
               );
@@ -415,11 +533,75 @@ const UsersTable = (props) => {
         </tbody>
       </table>
 
-      <button className="btn btn-default m-5" onClick={loadMore}>
-        Load more ...
-      </button>
+      {rowCount < perPage ? (
+        <button className="btn btn-default m-5" onClick={loadMore}>
+          Load more ...
+        </button>
+      ) : (
+        <div className="intro-y  m-5 col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            className="btn"
+            disabled={rowCount < perPage ? true : false}
+          >
+            Prev
+          </button>
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            className="btn ml-5"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
+      <Modal
+        size="modal-lg"
+        show={infoModal}
+        onHidden={() => {
+          setInfoModal(false);
+        }}
+      >
+        <ModalHeader>
+          <h3>Feedback</h3>
+        </ModalHeader>
+
+        <ModalBody className="p-0">
+          <div className="p-5 text-center">
+            <div className="my-5 ">{feedback}</div>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <div className=" text-center">
+            <button
+              type="button"
+              onClick={() => {
+                setInfoModal(false);
+              }}
+              className="btn btn-outline-secondary w-24 mr-1"
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={markRead}
+              type="button"
+              className="btn btn-warning text-white "
+            >
+              Mark as read
+              {innerLoading && (
+                <LoadingIcon
+                  icon="three-dots"
+                  color="white"
+                  className="w-4 h-4 ml-2"
+                />
+              )}
+            </button>
+          </div>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 };
 
-export default UsersTable;
+export default CallsTable;

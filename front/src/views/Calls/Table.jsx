@@ -13,6 +13,7 @@ import axios from "axios";
 import { useState } from "react";
 import { adminApi } from "../../configuration";
 import CopyEle from "./CopyEle";
+import { pageLimit } from "../../state/admin-atom";
 const fText = (text) => {
   return text ? text.substr(0, 10) + "..." : "";
 };
@@ -61,8 +62,9 @@ const CallsTable = (props) => {
     headers,
     section,
     setSection,
-    setPageOff,
-    pageOff,
+    setCurrentPage,
+    currentPage,
+    perPage,
   } = props;
 
   const [rowCount, setRowCount] = useState(10);
@@ -113,13 +115,8 @@ const CallsTable = (props) => {
   };
 
   const loadMore = () => {
-    if (calls.length < rowCount) {
-      setPageOff(pageOff + 100);
-      console.log("load new data from server", pageOff);
-    } else {
-      let count = rowCount + 20;
-      setRowCount(count);
-    }
+    let count = rowCount + 20;
+    setRowCount(count);
   };
 
   const allOver = (e) => {
@@ -367,7 +364,7 @@ const CallsTable = (props) => {
                       />
                     </div>
                   </td>
-                  <td className="w-40">{key + 1}</td>
+                  <td className="w-40">{ key + 1}</td>
                   <td>
                     {user.first_name} {user.last_name}
                   </td>
@@ -536,22 +533,27 @@ const CallsTable = (props) => {
         </tbody>
       </table>
 
-      {/* <button className="btn btn-default m-5" onClick={loadMore}>
-        Load more ...
-      </button> */}
-
-      <div className="intro-y  mt-5 col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-        <button
-          onClick={() => loadMore(rowCount - 100)}
-          className="btn"
-          disabled={rowCount < 100 ? true : false}
-        >
-          Prev
+      {rowCount < perPage ? (
+        <button className="btn btn-default m-5" onClick={loadMore}>
+          Load more ...
         </button>
-        <button onClick={() => loadMore(rowCount + 100)} className="btn ml-5">
-          Next
-        </button>
-      </div>
+      ) : (
+        <div className="intro-y  m-5 col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            className="btn"
+            disabled={rowCount < perPage ? true : false}
+          >
+            Prev
+          </button>
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            className="btn ml-5"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       <Modal
         size="modal-lg"
