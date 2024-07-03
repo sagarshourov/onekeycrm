@@ -56,8 +56,14 @@ class Calls extends Model
 
     public function extra()
     {
-        return $this->hasMany(ExtraGroups::class, 'call_id', 'id')->orderBy('id', 'ASC')->select('id', 'groups', 'call_id','user_id','created_at');
+        return $this->hasMany(ExtraGroups::class, 'call_id', 'id')->orderBy('id', 'ASC')->select('id', 'groups', 'call_id', 'user_id', 'created_at');
     }
+
+    public function extraGroup()
+    {
+        return $this->hasOne(ExtraGroups::class, 'call_id', 'id')->whereIn('groups', ['my_step','call_schedule'])->orderBy('id', 'ASC')->select('id', 'groups', 'call_id');
+    }
+
 
     public function history()
     {
@@ -350,7 +356,7 @@ class Calls extends Model
 
         $agToSigned = $agreedToSignedCounts->get(1, 0);
         $notAgreeToSigned = $agreedToSignedCounts->get(0, 0);
-      //  return  $notAgreeToSigned;
+        //  return  $notAgreeToSigned;
 
         $agSignedtotal = self::whereHas('userBelong', function ($query) use ($team) {
             // Filter by user type 1 or 2
@@ -360,8 +366,8 @@ class Calls extends Model
         if ($agSignedtotal == 0) return [];
 
 
-        $agSignedPercentage = $agToSigned > 0 ? number_format( (($agToSigned / $agSignedtotal) * 100),2) : 0;
-        $agNoSignedPercentage =  $notAgreeToSigned > 0 ? number_format((($notAgreeToSigned / $agSignedtotal) * 100),2) : 0;
+        $agSignedPercentage = $agToSigned > 0 ? number_format((($agToSigned / $agSignedtotal) * 100), 2) : 0;
+        $agNoSignedPercentage =  $notAgreeToSigned > 0 ? number_format((($notAgreeToSigned / $agSignedtotal) * 100), 2) : 0;
 
 
 
@@ -516,7 +522,7 @@ class Calls extends Model
                 'id' => $status->id,
                 'p' => number_format($per, 2),
                 'title' => $status->title,
-                'total'=> $packagetotal
+                'total' => $packagetotal
             ];
         });
 

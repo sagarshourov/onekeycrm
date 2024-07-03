@@ -12,19 +12,8 @@ import dom from "@left4code/tw-starter/dist/js/dom";
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 
-import {
-  useRecoilStateLoadable,
-  useRecoilValue,
-  useRecoilValueLoadable,
-} from "recoil";
-import {
-  callListState,
-  sectionIndex,
-  perPageIndex,
-  currentPageIndex,
-  callSelectIndex,
-  sidebarSelect,
-} from "../../state/admin-atom";
+import { useRecoilStateLoadable, useRecoilValue } from "recoil";
+import { callListState , perPageIndex , currentPageIndex , callSelectIndex} from "../../state/admin-atom";
 import { allUserListState } from "../../state/admin-atom";
 
 import { loginState } from "../../state/login-atom";
@@ -42,41 +31,19 @@ import classnames from "classnames";
 import { settingState } from "../../state/setting-atom";
 import CallViewModal from "./CallViewModal";
 
-// function get_single(arr, group) {
-//   var date = "";
-//   if (arr.extra && arr.extra.length > 0) {
-//     arr.extra.map((dat, index) => {
-//       if (dat.groups == group && dat.values[0] && dat.values[0].value) {
-//         date = dat.values[0].value;
-//       }
-//     });
-//   }
-//   //console.log(date);
+function get_single(arr, group) {
+  var date = "";
+  if (arr.extra && arr.extra.length > 0) {
+    arr.extra.map((dat, index) => {
+      if (dat.groups == group && dat.values[0] && dat.values[0].value) {
+        date = dat.values[0].value;
+      }
+    });
+  }
+  //console.log(date);
 
-//   return Date.parse(date);
-// }
-
-// function get_single(arr, group) {
-//   //console.log('get_single',arr);
-//   var date = "";
-//   if (arr && arr.extra_group) {
-//     arr.extra_group.extra_values.map((dat, index) => {
-//       if (
-//         dat.groups == group &&
-//         dat.extra_values[0] &&
-//         dat.extra_values[0].value
-//       ) {
-//         console.log(dat.extra_values);
-//         date = dat.extra_values[0].value;
-//       } else {
-//         console.log("else");
-//       }
-//     });
-//   }
-//   console.log(date);
-
-//   return Date.parse(date);
-// }
+  return Date.parse(date);
+}
 
 function sectionFind(array, id) {
   if (array.length == 0) return 0;
@@ -102,17 +69,141 @@ function todayNextFilters(array, callSwitch, user_id) {
     return filter(array, (_items) => {
       //return Date.parse(_items.follow_up_date) === Date.parse(today)
       return (
-        _items.next_step_date != null &&
-        Date.parse(_items.next_step_date) === Date.parse(today) &&
+        _items.field == "next_step_date" &&
+        Date.parse(_items.value) === Date.parse(today) &&
         _items?.assigned_to?.id === user_id
       );
     });
   } else {
     return filter(array, (_items) => {
       return (
-        _items.next_step_date != null &&
-        Date.parse(_items.next_step_date) === Date.parse(today)
+        _items.field == "next_step_date" &&
+        Date.parse(_items.value) === Date.parse(today)
       );
+    });
+  }
+}
+
+function tomorrowNextFilters(array, callSwitch, user_id) {
+  var tomorrow = new Date();
+
+  tomorrow =
+    tomorrow.getFullYear() +
+    "-" +
+    (tomorrow.getMonth() + 1) +
+    "-" +
+    (tomorrow.getDate() + 1);
+  tomorrow = helper.formatDate(tomorrow, "YYYY-MM-DD");
+  if (callSwitch) {
+    return filter(array, (_items) => {
+      //return Date.parse(_items.follow_up_date) === Date.parse(today)
+      return (
+        _items.field == "next_step_date" &&
+        Date.parse(_items.value) === Date.parse(tomorrow) &&
+        _items?.assigned_to?.id === user_id
+      );
+    });
+  } else {
+    return filter(array, (_items) => {
+      return (
+        _items.field == "next_step_date" &&
+        Date.parse(_items.value) === Date.parse(tomorrow)
+      );
+    });
+  }
+}
+
+function scheduleFilters(array, callSwitch, user_id) {
+  if (array.length == 0) return;
+  var today = new Date();
+
+  var today = helper.formatDate(today, "YYYY-MM-DD");
+
+  if (callSwitch) {
+    var data = filter(array, (_items) => {
+      //return Date.parse(_items.follow_up_date) === Date.parse(today)
+
+      return (
+        _items.field == "date" &&
+        Date.parse(_items.value) === Date.parse(today) &&
+        _items?.assigned_to?.id === user_id
+      );
+    });
+
+    return data.sort((a, b) => parseInt(a.time) - parseInt(b.time));
+
+    // return data;
+  } else {
+    var data = filter(array, (_items) => {
+      //return Date.parse(_items.follow_up_date) === Date.parse(today)
+      //return Date.parse(_items.call_schedule_date) === Date.parse(today);
+
+      return (
+        _items.field == "date" && Date.parse(_items.value) === Date.parse(today)
+      );
+    });
+
+    return data.sort((a, b) => parseInt(a.time) - parseInt(b.time));
+
+    //return data;
+  }
+}
+
+function tomorrowScheduleFilters(array, callSwitch, user_id) {
+  if (array.length == 0) return;
+
+  var tomorrow = new Date();
+
+  tomorrow =
+    tomorrow.getFullYear() +
+    "-" +
+    (tomorrow.getMonth() + 1) +
+    "-" +
+    (tomorrow.getDate() + 1);
+
+  tomorrow = helper.formatDate(tomorrow, "YYYY-MM-DD");
+
+  if (callSwitch) {
+    var data = filter(array, (_items) => {
+      return (
+        _items.field == "date" &&
+        Date.parse(_items.value) === Date.parse(tomorrow) &&
+        _items?.assigned_to?.id === user_id
+      );
+    });
+    return data.sort((a, b) => parseInt(a.time) - parseInt(b.time));
+  } else {
+    var data = filter(array, (_items) => {
+      return (
+        _items.field == "date" &&
+        Date.parse(_items.value) === Date.parse(tomorrow)
+      );
+    });
+    return data.sort(
+      (a, b) => parseInt(a.time) - parseInt(b.time)
+    );
+    //return data;
+  }
+}
+
+function todayNextFilters(array, callSwitch, user_id) {
+  if (array.length == 0) return;
+  var today = new Date();
+
+  var today = helper.formatDate(today, "YYYY-MM-DD");
+
+  if (callSwitch) {
+    return filter(array, (_items) => {
+      //return Date.parse(_items.follow_up_date) === Date.parse(today)
+      return (
+        get_single(_items, "my_step") === Date.parse(today) &&
+        _items?.assigned_to?.id === user_id
+      );
+    });
+  } else {
+    return filter(array, (_items) => {
+      //return Date.parse(_items.follow_up_date) === Date.parse(today)
+      return get_single(_items, "my_step") === Date.parse(today);
     });
   }
 }
@@ -137,17 +228,14 @@ function tomorrowNextFilters(array, callSwitch, user_id) {
     return filter(array, (_items) => {
       //return Date.parse(_items.follow_up_date) === Date.parse(today)
       return (
-        _items.next_step_date != null &&
-        Date.parse(_items.next_step_date) === Date.parse(tomorrow) &&
-        _items?.assigned_to === user_id
+        get_single(_items, "my_step") === Date.parse(tomorrow) &&
+        _items?.assigned_to?.id === user_id
       );
     });
   } else {
     return filter(array, (_items) => {
-      return (
-        _items.next_step_date != null &&
-        Date.parse(_items.next_step_date) === Date.parse(tomorrow)
-      );
+      //return Date.parse(_items.follow_up_date) === Date.parse(today)
+      return get_single(_items, "my_step") === Date.parse(tomorrow);
     });
   }
 }
@@ -158,32 +246,33 @@ function scheduleFilters(array, callSwitch, user_id) {
 
   var today = helper.formatDate(today, "YYYY-MM-DD");
 
+  // return filter(array, (_items) => {
+  //   return Date.parse(_items.call_schedule_date) === Date.parse(today);
+  // });
+
   if (callSwitch) {
     var data = filter(array, (_items) => {
       //return Date.parse(_items.follow_up_date) === Date.parse(today)
-
       return (
-        _items.date_value != null &&
-        Date.parse(_items.date_value) === Date.parse(today) &&
-        _items?.assigned_to === user_id
+        Date.parse(_items.call_schedule_date) === Date.parse(today) &&
+        _items?.assigned_to?.id === user_id
       );
     });
 
-    return data.sort((a, b) => parseInt(a.time_value) - parseInt(b.time_value));
+    return data.sort(
+      (a, b) => parseInt(a.call_schedule_time) - parseInt(b.call_schedule_time)
+    );
 
     // return data;
   } else {
     var data = filter(array, (_items) => {
       //return Date.parse(_items.follow_up_date) === Date.parse(today)
-      //return Date.parse(_items.call_schedule_date) === Date.parse(today);
-
-      return (
-        _items.date_value != null &&
-        Date.parse(_items.date_value) === Date.parse(today)
-      );
+      return Date.parse(_items.call_schedule_date) === Date.parse(today);
     });
 
-    return data.sort((a, b) => parseInt(a.time_value) - parseInt(b.time_value));
+    return data.sort(
+      (a, b) => parseInt(a.call_schedule_time) - parseInt(b.call_schedule_time)
+    );
 
     //return data;
   }
@@ -205,31 +294,21 @@ function tomorrowScheduleFilters(array, callSwitch, user_id) {
 
   if (callSwitch) {
     var data = filter(array, (_items) => {
-      //return Date.parse(_items.follow_up_date) === Date.parse(today)
-
       return (
-        _items.date_value != null &&
-        Date.parse(_items.date_value) === Date.parse(tomorrow) &&
-        _items?.assigned_to === user_id
+        Date.parse(_items.call_schedule_date) === Date.parse(tomorrow) &&
+        _items?.assigned_to?.id === user_id
       );
     });
-
-    return data.sort((a, b) => parseInt(a.time_value) - parseInt(b.time_value));
-
-    // return data;
+    return data.sort(
+      (a, b) => parseInt(a.call_schedule_time) - parseInt(b.call_schedule_time)
+    );
   } else {
     var data = filter(array, (_items) => {
-      //return Date.parse(_items.follow_up_date) === Date.parse(today)
-      //return Date.parse(_items.call_schedule_date) === Date.parse(today);
-
-      return (
-        _items.date_value != null &&
-        Date.parse(_items.date_value) === Date.parse(tomorrow)
-      );
+      return Date.parse(_items.call_schedule_date) === Date.parse(tomorrow);
     });
-
-    return data.sort((a, b) => parseInt(a.time_value) - parseInt(b.time_value));
-
+    return data.sort(
+      (a, b) => parseInt(a.call_schedule_time) - parseInt(b.call_schedule_time)
+    );
     //return data;
   }
 }
@@ -266,7 +345,7 @@ function applyAllFilters(
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
+          -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -295,7 +374,7 @@ function applyAllFilters(
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
+          -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -345,7 +424,7 @@ function applySortFilters(array, searchValue, sec, user_id, priority) {
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
+          -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -377,7 +456,7 @@ function applySortFilters(array, searchValue, sec, user_id, priority) {
         (_items.results.id == 3 || _items.results.id == 6) &&
         ((_items.email &&
           _items.email.toLowerCase().indexOf(searchValue.toLowerCase()) !==
-            -1) ||
+          -1) ||
           (_items.first_name &&
             _items.first_name
               .toLowerCase()
@@ -404,21 +483,15 @@ const AdminUsers = (props) => {
   let { id } = useParams();
   const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
 
-  const [callData, setCallState] = useRecoilStateLoadable(callListState);
+ // const [callData, setCallState] = useRecoilStateLoadable(callListState);
   const [usersData, setUserState] = useRecoilStateLoadable(allUserListState);
 
-  // const [callData, setCallState] = useRecoilStateLoadable(callSelectIndex);
-  console.log("callData", callData);
-  const [currentPage, setCurrentPage] =
-    useRecoilStateLoadable(currentPageIndex);
+  const [callData, setCallState] = useRecoilStateLoadable(callSelectIndex);
+  console.log('callData',callData);
+  const [currentPage, setCurrentPage] = useRecoilStateLoadable(currentPageIndex);
 
   const [perPage, setPerPage] = useRecoilStateLoadable(perPageIndex);
-
-  const [section, setSectionAtom] = useRecoilStateLoadable(sectionIndex);
-
-  const sidebar = useRecoilValueLoadable(sidebarSelect);
-
-  //console.log("sidebar", sidebar);
+  
 
   const [rowCount, setRowCount] = useState(30);
 
@@ -469,11 +542,10 @@ const AdminUsers = (props) => {
   };
 
   const handelGo = (section, call) => {
-    const filteredObject = callData.contents.filter(
-      (obj) => obj.id == call.id
-    );
-    filteredObject[0] ? setSingleCall(filteredObject[0]) : setSingleCall(call);
+    //console.log("handel go", call);
+    setSingleCall(call);
     handelCallModel(true);
+
     document.getElementsByClassName(
       "item" + section
     )[0].parentNode.style.display = "block";
@@ -844,9 +916,10 @@ const AdminUsers = (props) => {
                     })}
                   ></div>
                 </div>
+
               </>
             )}
-            {allCheck.length == 0 && logindata.role === 1 && (
+            {(allCheck.length == 0 && logindata.role === 1) && (
               <div className="mr-1">
                 {order == "desc" ? (
                   <button
@@ -978,7 +1051,7 @@ const AdminUsers = (props) => {
 
                     var isOpen = null;
 
-                    if (calls && search !== "" && calls.length > 0) {
+                    if (search !== "" && calls.length > 0) {
                       isOpen = 0;
                     }
 
@@ -1028,6 +1101,7 @@ const AdminUsers = (props) => {
                                 setCurrentPage={setCurrentPage}
                                 currentPage={parseInt(currentPage.contents)}
                                 perPage={perPage.contents}
+                                
                               />
                             </AccordionPanel>
                           </AccordionItem>
@@ -1064,14 +1138,14 @@ const AdminUsers = (props) => {
         </div>
 
         <div className="col-span-1 lg:order-2 order-1 pt-12">
-          {sidebar.state === "hasValue" && (
+          {callData.state === "hasValue" && (
             <>
               <CallSchedule
                 title="Today's Call Schedule"
                 theme=" bg-warning text-white"
                 handelGo={handelGo}
                 data={scheduleFilters(
-                  sidebar.contents,
+                  callData.contents,
                   callSwitch,
                   logindata.userId
                 )}
@@ -1082,7 +1156,7 @@ const AdminUsers = (props) => {
                 theme=" table-dark text-white"
                 handelGo={handelGo}
                 data={tomorrowScheduleFilters(
-                  sidebar.contents,
+                  callData.contents,
                   callSwitch,
                   logindata.userId
                 )}
@@ -1114,7 +1188,7 @@ const AdminUsers = (props) => {
                 theme=" bg-success text-white"
                 handelGo={handelGo}
                 data={todayNextFilters(
-                  sidebar.contents,
+                  callData.contents,
                   callSwitch,
                   logindata.userId
                 )}
@@ -1125,7 +1199,7 @@ const AdminUsers = (props) => {
                 theme=" table-light text-white"
                 handelGo={handelGo}
                 data={tomorrowNextFilters(
-                  sidebar.contents,
+                  callData.contents,
                   callSwitch,
                   logindata.userId
                 )}

@@ -4,13 +4,22 @@
  * will cause our Recoil app state to be synchronized.
  */
 
-// export const getBaseApi = () => `https://api.onekeycrm.us/api/`;
+export const getBaseApi = () => `https://api.onekeycrm.us/api/`;
 
-// export const  adminApi = () => `https://api.onekeycrm.us/api/admin/`;
+export const  adminApi = () => `https://api.onekeycrm.us/api/admin/`;
 
-export const getBaseApi = () => `https://api.sagarroy.com/api/`;
+//__________________________________________________
 
-export const  adminApi = () => `https://api.sagarroy.com/api/admin/`;
+
+
+// export const getBaseApi = () => `https://api.sagarroy.com/api/`;
+
+// export const  adminApi = () => `https://api.sagarroy.com/api/admin/`;
+
+//__________________________________________________
+
+
+
 // export const getBaseApi = () => `http://localhost:8000/api/`;
 
 // export const adminApi = () => `http://localhost:8000/api/admin/`;

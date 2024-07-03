@@ -18,11 +18,56 @@ export async function getAssignUEmployee(loginstate, id) {
   }
 }
 
-export async function getCallsPaginationIndex(loginState, currentPage, order , limit) {
+export async function getSidebar(
+  section,
+  loginState,
+  currentPage,
+  order,
+  limit
+) {
   let tokens = loginState.token ? loginState.token : "invalid";
   let headers = { Authorization: `Bearer ` + tokens };
 
-  const userApiUrl = adminApi() + "calls_pagination/" + currentPage + "/" + order+'/'+limit;
+  const userApiUrl =
+    adminApi() +
+    "get_sidebar/" +
+    section +
+    "/" +
+    currentPage +
+    "/" +
+    order +
+    "/" +
+    limit;
+
+  try {
+    const response = await axios.get(userApiUrl, { headers });
+    return response.data || [];
+  } catch (error) {
+    handelError(error);
+    throw new Error(`Error in 'axiosGetJsonData(${userApiUrl})': 'Err`);
+  }
+}
+
+export async function getCallsPaginationIndex(
+  section,
+  loginState,
+  currentPage,
+  order,
+  limit
+) {
+  let tokens = loginState.token ? loginState.token : "invalid";
+  let headers = { Authorization: `Bearer ` + tokens };
+
+  const userApiUrl =
+    adminApi() +
+    "calls_pagination/" +
+    section +
+    "/" +
+    currentPage +
+    "/" +
+    order +
+    "/" +
+    limit;
 
   try {
     const response = await axios.get(userApiUrl, { headers });

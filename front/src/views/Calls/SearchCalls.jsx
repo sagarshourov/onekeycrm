@@ -53,6 +53,8 @@ const AdminUsers = (props) => {
   const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
 
   const [callData, setCallState] = useRecoilStateLoadable(searchListState);
+
+  console.log('search',callData);
   const [rowCount, setRowCount] = useState(10);
   const [search, setSearch] = useState("");
   const [aheck, setAcheck] = useState(false);
@@ -455,7 +457,7 @@ const AdminUsers = (props) => {
                       <SearchTable
                         rowCount={rowCount}
                         setDeleteConfirmationModal={setDeleteConfirmationModal}
-                        calls={callData.contents}
+                        users={callData.contents}
                         setUserId={setCallId}
                         setCallState={setCallState}
                         allCheck={allCheck}

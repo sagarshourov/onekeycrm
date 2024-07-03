@@ -51,7 +51,10 @@ Route::group(["prefix" => "admin", 'middleware' => 'auth:api', "name" => "admin"
     Route::resource('users', UserController::class);
     Route::resource('calls', CallsController::class);
 
-    Route::get('calls_pagination/{off}/{order}/{limit}', 'App\Http\Controllers\CallsController@call_paginate');
+    Route::get('calls_pagination/{section}/{off}/{order}/{perPage}', 'App\Http\Controllers\CallsQueryController@index');
+
+    Route::get('get_sidebar/{section}/{off}/{order}/{perPage}', 'App\Http\Controllers\CallsController@get_sidebar');
+    
 
 
     Route::put('call_single/{id}', 'App\Http\Controllers\CallsController@call_single');

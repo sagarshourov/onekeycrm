@@ -33,6 +33,9 @@ const SearchTable = (props) => {
   const [showCallVew, setCallView] = useState(false);
   const [singleCall, setSingleCall] = useState([]);
 
+
+  console.log(users);
+
   const handelCallModel = (show) => {
     setCallView(show);
   };

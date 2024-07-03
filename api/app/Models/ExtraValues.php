@@ -18,4 +18,10 @@ class ExtraValues extends Model
     protected $fillable = [
         'id', 'field', 'value', 'ext_id'
     ];
+
+
+    public function ExtraGroups()
+    {
+        return $this->belongsTo(ExtraGroups::class, 'ext_id', 'id')->select('id', 'groups', 'call_id');
+    }
 }

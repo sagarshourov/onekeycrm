@@ -172,7 +172,7 @@ const CallsTable = (props) => {
   const feedbackCheck = (history) => {
     var is_admin = history.map((data) => {
       if (data.field === "feedbacks") {
-        return data.user.is_admin;
+        return data?.user?.is_admin;
       }
     });
     if (is_admin.length > 0) return is_admin[0];
@@ -364,7 +364,7 @@ const CallsTable = (props) => {
                       />
                     </div>
                   </td>
-                  <td className="w-40">{ key + 1}</td>
+                  <td className="w-40">{key + 1}</td>
                   <td>
                     {user.first_name} {user.last_name}
                   </td>
@@ -422,24 +422,7 @@ const CallsTable = (props) => {
                     </div>
                   </td>
 
-                  <td>
-                    {user?.package?.title}
-                    {/* <select
-                      onChange={(e) => handelChange(e, user.id, "n")}
-                      name="package"
-                      className="form-select form-select-sm mt-2 w-20"
-                      defaultValue={user?.package?.id}
-                    >
-                      <option value="0">Select..</option>
-
-                      {setting.packages &&
-                        setting.packages.map((val, indx) => (
-                          <option key={indx} value={val?.id}>
-                            {val?.title}
-                          </option>
-                        ))}
-                    </select> */}
-                  </td>
+                  <td>{user?.package?.title}</td>
 
                   <td className="text-center">
                     {user.ag === 0 ? "No" : "Yes"}
@@ -447,25 +430,7 @@ const CallsTable = (props) => {
 
                   <td> {user.agreed_to_signed === 0 ? "No" : "Yes"}</td>
 
-                  <td>
-                    {/* <select
-                      onChange={(e) => handelChange(e, user.id, "n")}
-                      name="status"
-                      className="form-select form-select-sm mt-2 w-20"
-                      defaultValue={user?.status}
-                    >
-                      <option value="0">Select..</option>
-
-                      {setting.status &&
-                        setting.status.map((val, indx) => (
-                          <option key={indx} value={val?.id}>
-                            {val?.title}
-                          </option>
-                        ))}
-                    </select> */}
-
-                    {user?.statu?.title}
-                  </td>
+                  <td>{user?.statu?.title}</td>
                   <td>{extra_title(user, "my_step", 0)}</td>
                   <td>
                     <div className="text-center">
@@ -533,7 +498,7 @@ const CallsTable = (props) => {
         </tbody>
       </table>
 
-      {rowCount < perPage ? (
+      {calls && calls.length > rowCount ? (
         <button className="btn btn-default m-5" onClick={loadMore}>
           Load more ...
         </button>

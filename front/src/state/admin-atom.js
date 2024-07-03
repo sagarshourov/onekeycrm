@@ -8,6 +8,7 @@ import {
   getCallsPagination,
   getCallsPaginationIndex,
   getAssignUEmployee,
+  getSidebar
 } from "../service/admin";
 import { loginState } from "../state/login-atom";
 /**
@@ -298,7 +299,16 @@ export const currentPageIndex = atom({
 });
 export const perPageIndex = atom({
   key: "perPageIndex",
-  default: 1200,
+  default: 200,
+});
+export const sectionIndex = atom({
+  key: "sectionIndex",
+  default: null,
+});
+
+export const sectionSidebar = atom({
+  key: "sectionSidebar",
+  default: null,
 });
 
 
@@ -308,6 +318,7 @@ export const callSelectIndex = selector({
   get: async ({ get }) => {
     try {
       const response = await getCallsPaginationIndex(
+        get(sectionIndex),
         get(loginState),
         get(currentPageIndex),
         "ASC",
@@ -325,3 +336,22 @@ export const callSelectIndex = selector({
 });
 
 
+export const sidebarSelect = selector({
+  key: "sidebarSelect",
+  get: async ({ get }) => {
+    try {
+      const response = await getSidebar(
+        get(sectionSidebar),
+        get(loginState),
+        get(currentPageIndex),
+        "ASC",
+        get(perPageIndex)
+      );
+
+      return response.data || [];
+    } catch (error) {
+      console.error(`paginationCallState -> callSelectIndex() ERROR: \n${error}`);
+      return [];
+    }
+  },
+});

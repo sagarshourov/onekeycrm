@@ -24,10 +24,6 @@ use App\Models\CallHistory;
 
 use Illuminate\Support\Facades\Http;
 
-use Carbon\Carbon;
-
-
-
 class CallsController extends BaseController
 {
 
@@ -93,69 +89,31 @@ class CallsController extends BaseController
     //         return Calls::WhereIn('results', [2, 3, 6])->with(['extra.values', 'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for',  'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort'])->orderBy('sort', 'ASC')->skip(($currentPage-1) * $perPage)->take($perPage)->get();
     //     }
     // }
-    public function get_sidebar($section, $currentPage = 1, $perPage = 500)
-    {
-        $today = Carbon::today()->toDateString();
-        $tomorrow = Carbon::tomorrow()->toDateString();
-       
 
-
-        $query = ExtraValues::whereIn('extra_values.field', ['date', 'next_step_date'])
-            ->where('extra_values.value', '>=', $today)
-            ->where('extra_values.value', '<=', $tomorrow)
-            ->join('extra_groups', 'extra_values.ext_id', '=', 'extra_groups.id')
-            ->join('calls', 'extra_groups.call_id', '=', 'calls.id')
-            ->leftJoin('extra_values as ev_time', function ($join) {
-                $join->on('extra_values.ext_id', '=', 'ev_time.ext_id')
-                    ->where('ev_time.field', '=', 'next_step_time');
-            })
-            ->leftJoin('extra_values as ev_date_time', function ($join) {
-                $join->on('extra_values.ext_id', '=', 'ev_date_time.ext_id')
-                    ->where('ev_date_time.field', '=', 'time');
-            })
-            ->leftJoin('sections', 'calls.sections', '=', 'sections.id')
-            ->select(
-                'calls.id as id',
-                'calls.email',
-                'calls.assigned_to as assigned_to',
-                'sections.id as sec_id',
-                'sections.title as section_title',
-                DB::raw("MAX(CASE WHEN extra_values.field = 'date' THEN extra_values.value ELSE NULL END) as date_value"),
-                DB::raw("MAX(CASE WHEN extra_values.field = 'next_step_date' THEN extra_values.value ELSE NULL END) as next_step_date"),
-                DB::raw("MAX(ev_time.value) as next_step_time"),
-                DB::raw("MAX(ev_date_time.value) as time_value")
-            )
-            ->groupBy('calls.id', 'calls.email', 'sections.title');
-        $results = $query->get();
-
-        return $this->sendResponse($results, 'Calls Retrieve successfully.');
-    }
 
 
 
     private function get_calls($currentPage = 1, $perPage = 500)
     {
         $user = Auth::user();
-        // $with = array('extra.values',   'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort');
 
-        // $user = Auth::user();
+        $with = array('extra.values',   'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user', 'p_sort');
 
-        $with = array('extra.values', 'assigned_to', 'section', 'results', 'history', 'priorities', 'statu', 'package', 'user',  'p_sort');
-        //   $fourMonthsAgo = now()->subMonths(4);
-        //  $que =  Calls::WhereIn('results', [1, 2, 6])->whereDate('created_at', '>=', $fourMonthsAgo);
-        $que =  Calls::WhereIn('results', [3, 6]);
-        //   $que =  Calls::Where('results', 6);
+        //   return   $user;
         if ($user->is_admin == 3) {    // employee
-            $que->where('assigned_to', $user->id);
+            return Calls::where('assigned_to', $user->id)->WhereIn('results', [1, 2, 3, 6])->with($with)->orderBy('sort', 'ASC')->skip(($currentPage-1) * $perPage)->take($perPage)->get();
         } else if ($user->is_admin == 4) { // supervisor 
             $emp = AssignEmployee::where('admin_id', $user->id)->pluck('user_id')->toArray();;
             $emp[] = $user->id;
-            $que->WhereIn('assigned_to', $emp);
+            return  Calls::WhereIn('assigned_to', $emp)
+                ->where(function ($q) {
+                    $q->WhereIn('results', [1, 2, 3, 6]);
+                })->with($with)->orderBy('sort', 'ASC')->skip(($currentPage-1) * $perPage)->take($perPage)->get();
+           
+        } else { // admin and super admin
+            return Calls::WhereIn('results', [2, 3, 6])->with($with)->orderBy('sort', 'ASC')->skip(($currentPage-1) * $perPage)->take($perPage)->get();
         }
-
-        return $que->with($with)->orderBy('sort', 'ASC')->get(['id', 'first_name', 'last_name', 'phone_number', 'whatsapp', 'email',  'priority', 'sections', 'follow_up_date', 'status', 'package',  'results', 'user_id',  'ag', 'age', 'f_results', 'first_contact',  'assigned_to', 'assigned_date', 'call_schedule_date', 'feedbacks',  'agreed_to_signed', 'follow_up_notes',  'first_call_notes', 'case_type', 'user_id', 'sort', 'p_sort']);
     }
-
     public function call_paginate($off, $order, $perPage)
     {
 
@@ -163,6 +121,20 @@ class CallsController extends BaseController
     }
 
 
+
+    private function get_Cancel_calls()
+    {
+
+        $user = Auth::user();
+
+        //   return   $user;
+
+        if ($user->is_admin == 3) {
+            return Calls::where(['assigned_to' => $user->id, 'results' => 3])->with(['extra.values', 'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for', 'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user'])->orderBy('sort', 'DESC')->get();
+        } else {
+            return Calls::where('results', 3)->with(['extra.values', 'history.user.profile', 'goal', 'marital_status', 'want_to_study', 'assigned_to', 'applying_for',  'section', 'results', 'follow_up_call_results', 'priorities', 'statu', 'package', 'cancel_reason', 'user'])->orderBy('sort', 'DESC')->get();
+        }
+    }
 
 
     public function reports($emp_id, $off)
@@ -446,7 +418,11 @@ class CallsController extends BaseController
     {
 
         if ($type == 10) {
-
+            // $calls = Calls::WhereIn('assigned_to', explode(',', $users))
+            //     ->where('ag', 1)
+            //     ->whereBetween('agree_date_sent', array($startDate, $endDate))
+            //     ->offset($off)->limit($limit)
+            //     ->get();
             $usersArray = explode(',', $users);
 
             $calls =  DB::table('calls')
@@ -521,6 +497,7 @@ class CallsController extends BaseController
     public function index()
     {
         //
+
         return $this->sendResponse($this->get_calls(), 'Calls Retrieve successfully.');
     }
 
@@ -549,7 +526,23 @@ class CallsController extends BaseController
         return   $data;
     }
 
+    // private function extra_insert($data, $fields)
+    // {
 
+    //     if (count($fields) == 0) {
+    //         return;
+    //     }
+
+    //     foreach ($fields as $value) {
+    //         if (isset($data[$value])) {
+    //             CallsExtra::create([
+    //                 'call_id' => (int) $data['id'],
+    //                 'field' => $value,
+    //                 'value' => $data[$value],
+    //             ]);
+    //         }
+    //     }
+    // }
 
     private function delete_extra($call_id, $group)
     {
@@ -616,6 +609,13 @@ class CallsController extends BaseController
 
             $this->create_call_extra($filed, $value, $user_id, $call_id);
         }
+
+
+        // $input['call_id'] = (int) $call_id;
+        // $input['field'] = $filed;
+        // $input['value'] =  $value . $user_id;
+        // $input['user_id'] =  $user->id;
+        // CallsExtra::create($input);
     }
 
 
